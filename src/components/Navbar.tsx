@@ -1,3 +1,4 @@
+
 import { Menu } from "lucide-react";
 import { Button } from "./ui/button";
 import {
@@ -7,6 +8,12 @@ import {
 } from "./ui/sheet";
 
 const Navbar = () => {
+  const handleGetStarted = () => {
+    // In a real app, this would navigate to a signup or contact page
+    console.log("Get Started button clicked");
+    alert("Thanks for your interest! Our agent will contact you shortly.");
+  };
+
   return (
     <nav className="absolute w-full z-50">
       <div className="container mx-auto px-4 max-w-6xl">
@@ -19,7 +26,11 @@ const Navbar = () => {
             <a href="#about" className="text-white hover:text-white/80 transition-colors">About</a>
             <a href="#testimonials" className="text-white hover:text-white/80 transition-colors">Testimonials</a>
             <a href="#contact" className="text-white hover:text-white/80 transition-colors">Contact</a>
-            <Button variant="outline" className="text-black border-white bg-white hover:bg-white/90">
+            <Button 
+              variant="outline" 
+              className="text-black border-white bg-white hover:bg-white/90"
+              onClick={handleGetStarted}
+            >
               Get Started
             </Button>
           </div>
@@ -38,7 +49,12 @@ const Navbar = () => {
                   <a href="#about" className="text-lg">About</a>
                   <a href="#testimonials" className="text-lg">Testimonials</a>
                   <a href="#contact" className="text-lg">Contact</a>
-                  <Button className="w-full text-black bg-white hover:bg-white/90">Get Started</Button>
+                  <Button 
+                    className="w-full text-black bg-white hover:bg-white/90"
+                    onClick={handleGetStarted}
+                  >
+                    Get Started
+                  </Button>
                 </div>
               </SheetContent>
             </Sheet>
