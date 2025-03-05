@@ -1,7 +1,8 @@
 
-import { MapPin, Bed, Bath, Square } from "lucide-react";
+import { MapPin, Bed, Bath, Square, Home, CreditCard } from "lucide-react";
 import { Card, CardContent } from "./ui/card";
 import { Link } from "react-router-dom";
+import { Button } from "./ui/button";
 
 interface PropertyCardProps {
   image: string;
@@ -24,6 +25,14 @@ const PropertyCard = ({
   bathrooms,
   area
 }: PropertyCardProps) => {
+  const handleClick = (e: React.MouseEvent, action: string) => {
+    e.preventDefault(); // Prevent navigating to property details
+    e.stopPropagation();
+    
+    // In a real app, this would navigate to a payment flow with the correct action
+    console.log(`${action} property: ${id}`);
+  };
+
   return (
     <Link to={`/property/${id}`}>
       <Card className="overflow-hidden group cursor-pointer hover:shadow-xl transition-shadow duration-300 border border-gray-100">
@@ -69,6 +78,27 @@ const PropertyCard = ({
                 )}
               </div>
             )}
+            
+            <div className="flex gap-2 mt-4 pt-4 border-t border-gray-100">
+              <Button
+                size="sm"
+                variant="default"
+                className="flex-1 bg-estate-800 hover:bg-estate-700 py-1 h-auto"
+                onClick={(e) => handleClick(e, "buy")}
+              >
+                <CreditCard className="w-3 h-3 mr-1" />
+                Buy
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                className="flex-1 border-estate-800 text-estate-800 hover:bg-estate-50 py-1 h-auto"
+                onClick={(e) => handleClick(e, "rent")}
+              >
+                <Home className="w-3 h-3 mr-1" />
+                Rent
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>

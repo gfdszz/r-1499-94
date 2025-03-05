@@ -1,13 +1,12 @@
-
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, Bed, Bath, Square, MapPin, Share, Heart } from "lucide-react";
+import { ArrowLeft, Bed, Bath, Square, MapPin, Share, Heart, Home, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { toast } from "@/hooks/use-toast";
+import PaymentModal from "@/components/PaymentModal";
 
-// Mock property data (in a real app, this would come from an API)
 const properties = [
   {
     id: "1",
@@ -71,15 +70,21 @@ const PropertyDetails = () => {
   const { id } = useParams<{ id: string }>();
   const [property, setProperty] = useState<any>(null);
   const [currentImage, setCurrentImage] = useState(0);
+  const [paymentModalOpen, setPaymentModalOpen] = useState(false);
+  const [isRental, setIsRental] = useState(false);
   
   useEffect(() => {
-    // In a real app, you would fetch the property details from an API
     const foundProperty = properties.find(p => p.id === id);
     if (foundProperty) {
       setProperty(foundProperty);
       setCurrentImage(0);
     }
   }, [id]);
+
+  const handlePayment = (rental: boolean) => {
+    setIsRental(rental);
+    setPaymentModalOpen(true);
+  };
 
   if (!property) {
     return (
@@ -125,6 +130,9 @@ const PropertyDetails = () => {
     });
   };
 
+  const numericPrice = parseInt(property.price.replace(/[^0-9]/g, ""));
+  const monthlyRent = Math.round(numericPrice * 0.004);
+
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
@@ -136,7 +144,6 @@ const PropertyDetails = () => {
         </Link>
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-          {/* Property Images */}
           <div className="lg:col-span-2">
             <div className="relative aspect-video overflow-hidden rounded-lg mb-4">
               <img 
@@ -165,7 +172,6 @@ const PropertyDetails = () => {
             </div>
           </div>
           
-          {/* Property Details */}
           <div className="space-y-6">
             <div>
               <h1 className="text-3xl md:text-4xl font-display text-estate-800 mb-2">{property.title}</h1>
@@ -174,6 +180,7 @@ const PropertyDetails = () => {
                 <span>{property.location}</span>
               </div>
               <p className="text-3xl font-display text-estate-800">{property.price}</p>
+              <p className="text-estate-500 mt-1">Estimated rent: ${monthlyRent.toLocaleString()}/month</p>
             </div>
             
             <div className="grid grid-cols-3 gap-4 py-6 border-y border-gray-200">
@@ -209,6 +216,27 @@ const PropertyDetails = () => {
                   <li key={index} className="text-estate-600">• {feature}</li>
                 ))}
               </ul>
+            </div>
+            
+            <div className="pt-6 border-t border-gray-200">
+              <h3 className="font-medium text-lg mb-3">Take Action</h3>
+              <div className="space-y-3">
+                <Button 
+                  onClick={() => handlePayment(false)}
+                  className="w-full bg-estate-800 hover:bg-estate-700 flex items-center justify-center"
+                >
+                  <CreditCard className="w-4 h-4 mr-2" />
+                  Purchase Property
+                </Button>
+                <Button 
+                  onClick={() => handlePayment(true)}
+                  variant="outline" 
+                  className="w-full border-estate-800 text-estate-800 hover:bg-estate-50 flex items-center justify-center"
+                >
+                  <Home className="w-4 h-4 mr-2" />
+                  Rent Property
+                </Button>
+              </div>
             </div>
             
             <div className="space-y-3 pt-4">
@@ -247,6 +275,14 @@ const PropertyDetails = () => {
           </div>
         </div>
       </div>
+      
+      <PaymentModal 
+        open={paymentModalOpen}
+        onOpenChange={setPaymentModalOpen}
+        propertyTitle={property?.title || ""}
+        price={property?.price || ""}
+        isRental={isRental}
+      />
       
       <Footer />
     </div>
