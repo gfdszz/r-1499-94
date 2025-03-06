@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { Search, SlidersHorizontal } from "lucide-react";
@@ -21,6 +20,7 @@ import {
   SelectValue 
 } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
+import PropertyGrid from "@/components/PropertyGrid";
 
 // Mock property data (in a real app, this would come from an API)
 const allProperties = [
@@ -109,16 +109,23 @@ const allProperties = [
 const Properties = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const initialSearch = searchParams.get("search") || "";
+  const initialType = (searchParams.get("type") as "sale" | "rent" | "all") || "all";
   
   const [searchQuery, setSearchQuery] = useState(initialSearch);
+  const [propertyType, setPropertyType] = useState(initialType);
   const [priceRange, setPriceRange] = useState([1000000, 8000000]);
   const [bedrooms, setBedrooms] = useState<string>("");
-  const [propertyType, setPropertyType] = useState<string>("");
   const [filteredProperties, setFilteredProperties] = useState(allProperties);
+  
+  // Update the property type in all properties data
+  const propertiesWithType = allProperties.map(property => ({
+    ...property,
+    type: property.price.includes('/month') ? 'rent' : 'sale' as 'sale' | 'rent'
+  }));
   
   // Apply filters whenever filter state changes
   useEffect(() => {
-    let filtered = allProperties;
+    let filtered = propertiesWithType;
     
     // Apply search filter
     if (searchQuery) {
@@ -144,9 +151,8 @@ const Properties = () => {
     }
     
     // Apply property type filter (in a real app, properties would have a type field)
-    if (propertyType) {
-      // This is a mock implementation since our data doesn't have property types
-      // In a real app, you would filter by the actual property type
+    if (propertyType && propertyType !== "all") {
+        filtered = filtered.filter(property => property.type === propertyType);
     }
     
     setFilteredProperties(filtered);
@@ -176,7 +182,6 @@ const Properties = () => {
           <h1 className="text-4xl font-display text-estate-800 mb-2">Find Your Dream Home</h1>
           <p className="text-estate-500 mb-8">Browse our collection of premium properties</p>
           
-          {/* Search and Filter Bar */}
           <div className="flex flex-col md:flex-row gap-4 mb-10">
             <form onSubmit={handleSearch} className="flex-grow">
               <div className="relative">
@@ -196,6 +201,26 @@ const Properties = () => {
                 </Button>
               </div>
             </form>
+            
+            {/* Property Type Filter */}
+            <Select value={propertyType} onValueChange={(value) => {
+              setPropertyType(value as "sale" | "rent" | "all");
+              if (value === "all") {
+                searchParams.delete("type");
+              } else {
+                searchParams.set("type", value);
+              }
+              setSearchParams(searchParams);
+            }}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Property Type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Properties</SelectItem>
+                <SelectItem value="sale">For Sale</SelectItem>
+                <SelectItem value="rent">For Rent</SelectItem>
+              </SelectContent>
+            </Select>
             
             {/* Filters */}
             <Sheet>
@@ -286,33 +311,10 @@ const Properties = () => {
           
           {/* Property Grid */}
           {filteredProperties.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-              {filteredProperties.map((property) => (
-                <Link to={`/property/${property.id}`} key={property.id} className="group">
-                  <div className="overflow-hidden rounded-lg shadow-md transition-all duration-300 hover:shadow-xl">
-                    <div className="relative aspect-[4/3] overflow-hidden">
-                      <img
-                        src={property.image}
-                        alt={property.title}
-                        className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
-                      />
-                      <div className="absolute top-3 right-3 bg-estate-800 text-white px-2 py-1 text-sm font-medium rounded">
-                        {property.price}
-                      </div>
-                    </div>
-                    <div className="p-4">
-                      <h3 className="text-lg font-medium text-estate-800 mb-1">{property.title}</h3>
-                      <p className="text-estate-500 mb-3">{property.location}</p>
-                      <div className="flex justify-between text-sm text-estate-600">
-                        <span>{property.bedrooms} Beds</span>
-                        <span>{property.bathrooms} Baths</span>
-                        <span>{property.area.toLocaleString()} sq ft</span>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
+            <PropertyGrid 
+              properties={filteredProperties} 
+              filterType={propertyType === "all" ? undefined : propertyType as "sale" | "rent"}
+            />
           ) : (
             <div className="text-center py-10">
               <h3 className="text-xl font-medium text-estate-800 mb-2">No properties found</h3>

@@ -1,4 +1,3 @@
-
 import PropertyCard from "./PropertyCard";
 import { useEffect, useState } from "react";
 
@@ -11,17 +10,18 @@ interface Property {
   bedrooms?: number;
   bathrooms?: number;
   area?: number;
+  type: 'sale' | 'rent';
 }
 
 interface PropertyGridProps {
   properties?: Property[];
   loading?: boolean;
+  filterType?: 'sale' | 'rent' | 'all';
 }
 
-const PropertyGrid = ({ properties: propProperties, loading = false }: PropertyGridProps) => {
+const PropertyGrid = ({ properties: propProperties, loading = false, filterType = 'all' }: PropertyGridProps) => {
   const [properties, setProperties] = useState<Property[]>([]);
   
-  // Default properties will be used if none are passed in
   useEffect(() => {
     if (propProperties) {
       setProperties(propProperties);
@@ -36,6 +36,7 @@ const PropertyGrid = ({ properties: propProperties, loading = false }: PropertyG
           bedrooms: 4,
           bathrooms: 3,
           area: 3200,
+          type: 'sale'
         },
         {
           id: "2",
@@ -46,16 +47,18 @@ const PropertyGrid = ({ properties: propProperties, loading = false }: PropertyG
           bedrooms: 6,
           bathrooms: 7,
           area: 6500,
+          type: 'sale'
         },
         {
           id: "3",
           image: "https://images.unsplash.com/photo-1433832597046-4f10e10ac764",
-          title: "Urban Penthouse",
+          title: "Urban Penthouse for Rent",
           location: "Manhattan, NY",
-          price: "$3,750,000",
+          price: "$15,000",
           bedrooms: 3,
           bathrooms: 3.5,
           area: 2800,
+          type: 'rent'
         },
         {
           id: "4",
@@ -66,10 +69,15 @@ const PropertyGrid = ({ properties: propProperties, loading = false }: PropertyG
           bedrooms: 5,
           bathrooms: 4,
           area: 3900,
+          type: 'sale'
         },
       ]);
     }
   }, [propProperties]);
+
+  const filteredProperties = filterType === 'all' 
+    ? properties 
+    : properties.filter(property => property.type === filterType);
 
   if (loading) {
     return (
@@ -87,8 +95,8 @@ const PropertyGrid = ({ properties: propProperties, loading = false }: PropertyG
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 max-w-7xl mx-auto px-4">
-      {properties.map((property) => (
-        <PropertyCard key={property.id} {...property} />
+      {filteredProperties.map((property) => (
+        <PropertyCard key={property.id} {...property} type={property.type} />
       ))}
     </div>
   );

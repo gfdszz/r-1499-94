@@ -1,5 +1,4 @@
-
-import { MapPin, Bed, Bath, Square, Home, CreditCard } from "lucide-react";
+import { MapPin, Bed, Bath, Square, Home, Tag } from "lucide-react";
 import { Card, CardContent } from "./ui/card";
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
@@ -13,6 +12,7 @@ interface PropertyCardProps {
   bedrooms?: number;
   bathrooms?: number;
   area?: number;
+  type?: 'sale' | 'rent';
 }
 
 const PropertyCard = ({ 
@@ -23,15 +23,16 @@ const PropertyCard = ({
   id = "1",
   bedrooms,
   bathrooms,
-  area
+  area,
+  type = 'sale'
 }: PropertyCardProps) => {
-  const handleClick = (e: React.MouseEvent, action: string) => {
-    e.preventDefault(); // Prevent navigating to property details
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
-    
-    // In a real app, this would navigate to a payment flow with the correct action
-    console.log(`${action} property: ${id}`);
+    console.log(`${type === 'sale' ? 'Purchase' : 'Rent'} property: ${id}`);
   };
+
+  const displayPrice = type === 'rent' ? `${price}/month` : price;
 
   return (
     <Link to={`/property/${id}`}>
@@ -44,7 +45,11 @@ const PropertyCard = ({
               className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
             />
             <div className="absolute top-3 right-3 bg-estate-800/90 backdrop-blur-sm text-white px-3 py-1.5 text-sm font-medium rounded-md">
-              {price}
+              {displayPrice}
+            </div>
+            <div className={`absolute top-3 left-3 ${type === 'sale' ? 'bg-blue-500' : 'bg-green-500'} text-white px-3 py-1.5 text-sm font-medium rounded-md flex items-center gap-1`}>
+              {type === 'sale' ? <Tag className="w-4 h-4" /> : <Home className="w-4 h-4" />}
+              {type === 'sale' ? 'For Sale' : 'For Rent'}
             </div>
           </div>
           <div className="p-5">
@@ -83,20 +88,20 @@ const PropertyCard = ({
               <Button
                 size="sm"
                 variant="default"
-                className="flex-1 bg-estate-800 hover:bg-estate-700 py-1 h-auto"
-                onClick={(e) => handleClick(e, "buy")}
+                className={`flex-1 ${type === 'sale' ? 'bg-blue-600 hover:bg-blue-700' : 'bg-green-600 hover:bg-green-700'} py-1 h-auto`}
+                onClick={handleClick}
               >
-                <CreditCard className="w-3 h-3 mr-1" />
-                Buy
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                className="flex-1 border-estate-800 text-estate-800 hover:bg-estate-50 py-1 h-auto"
-                onClick={(e) => handleClick(e, "rent")}
-              >
-                <Home className="w-3 h-3 mr-1" />
-                Rent
+                {type === 'sale' ? (
+                  <>
+                    <Tag className="w-3 h-3 mr-1" />
+                    Purchase
+                  </>
+                ) : (
+                  <>
+                    <Home className="w-3 h-3 mr-1" />
+                    Rent Now
+                  </>
+                )}
               </Button>
             </div>
           </div>
