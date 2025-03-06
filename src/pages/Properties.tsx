@@ -22,7 +22,6 @@ import {
 import { Slider } from "@/components/ui/slider";
 import PropertyGrid from "@/components/PropertyGrid";
 
-// Mock property data (in a real app, this would come from an API)
 const allProperties = [
   {
     id: "1",
@@ -33,6 +32,7 @@ const allProperties = [
     bedrooms: 4,
     bathrooms: 3,
     area: 3200,
+    type: 'sale' as const,
   },
   {
     id: "2",
@@ -43,16 +43,18 @@ const allProperties = [
     bedrooms: 6,
     bathrooms: 7,
     area: 6500,
+    type: 'sale' as const,
   },
   {
     id: "3",
     image: "https://images.unsplash.com/photo-1433832597046-4f10e10ac764",
     title: "Urban Penthouse",
     location: "Manhattan, NY",
-    price: "$3,750,000",
+    price: "$15,000/month",
     bedrooms: 3,
     bathrooms: 3.5,
     area: 2800,
+    type: 'rent' as const,
   },
   {
     id: "4",
@@ -63,6 +65,7 @@ const allProperties = [
     bedrooms: 5,
     bathrooms: 4,
     area: 3900,
+    type: 'sale' as const,
   },
   {
     id: "5",
@@ -73,6 +76,7 @@ const allProperties = [
     bedrooms: 2,
     bathrooms: 2.5,
     area: 1900,
+    type: 'sale' as const,
   },
   {
     id: "6",
@@ -83,6 +87,7 @@ const allProperties = [
     bedrooms: 4,
     bathrooms: 5,
     area: 4200,
+    type: 'sale' as const,
   },
   {
     id: "7",
@@ -93,6 +98,7 @@ const allProperties = [
     bedrooms: 4,
     bathrooms: 3,
     area: 2900,
+    type: 'sale' as const,
   },
   {
     id: "8",
@@ -103,6 +109,7 @@ const allProperties = [
     bedrooms: 5,
     bathrooms: 4.5,
     area: 5200,
+    type: 'sale' as const,
   },
 ];
 
@@ -112,22 +119,14 @@ const Properties = () => {
   const initialType = (searchParams.get("type") as "sale" | "rent" | "all") || "all";
   
   const [searchQuery, setSearchQuery] = useState(initialSearch);
-  const [propertyType, setPropertyType] = useState(initialType);
+  const [propertyType, setPropertyType] = useState<"sale" | "rent" | "all">(initialType);
   const [priceRange, setPriceRange] = useState([1000000, 8000000]);
   const [bedrooms, setBedrooms] = useState<string>("");
   const [filteredProperties, setFilteredProperties] = useState(allProperties);
-  
-  // Update the property type in all properties data
-  const propertiesWithType = allProperties.map(property => ({
-    ...property,
-    type: property.price.includes('/month') ? 'rent' : 'sale' as 'sale' | 'rent'
-  }));
-  
-  // Apply filters whenever filter state changes
+
   useEffect(() => {
-    let filtered = propertiesWithType;
+    let filtered = propertiesData;
     
-    // Apply search filter
     if (searchQuery) {
       filtered = filtered.filter(property => 
         property.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -135,13 +134,11 @@ const Properties = () => {
       );
     }
     
-    // Apply price filter
     filtered = filtered.filter(property => {
       const numericPrice = parseInt(property.price.replace(/[^0-9]/g, ''));
       return numericPrice >= priceRange[0] && numericPrice <= priceRange[1];
     });
     
-    // Apply bedroom filter
     if (bedrooms) {
       filtered = filtered.filter(property => 
         bedrooms === "5+" 
@@ -150,17 +147,15 @@ const Properties = () => {
       );
     }
     
-    // Apply property type filter (in a real app, properties would have a type field)
-    if (propertyType && propertyType !== "all") {
-        filtered = filtered.filter(property => property.type === propertyType);
+    if (propertyType !== "all") {
+      filtered = filtered.filter(property => property.type === propertyType);
     }
     
     setFilteredProperties(filtered);
   }, [searchQuery, priceRange, bedrooms, propertyType]);
-  
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    // Update URL search params
     if (searchQuery) {
       searchParams.set("search", searchQuery);
     } else {
@@ -168,7 +163,7 @@ const Properties = () => {
     }
     setSearchParams(searchParams);
   };
-  
+
   const formatPrice = (value: number) => {
     return `$${(value / 1000000).toFixed(1)}M`;
   };
@@ -202,16 +197,18 @@ const Properties = () => {
               </div>
             </form>
             
-            {/* Property Type Filter */}
-            <Select value={propertyType} onValueChange={(value) => {
-              setPropertyType(value as "sale" | "rent" | "all");
-              if (value === "all") {
-                searchParams.delete("type");
-              } else {
-                searchParams.set("type", value);
-              }
-              setSearchParams(searchParams);
-            }}>
+            <Select 
+              value={propertyType} 
+              onValueChange={(value: "sale" | "rent" | "all") => {
+                setPropertyType(value);
+                if (value === "all") {
+                  searchParams.delete("type");
+                } else {
+                  searchParams.set("type", value);
+                }
+                setSearchParams(searchParams);
+              }}
+            >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Property Type" />
               </SelectTrigger>
@@ -222,7 +219,6 @@ const Properties = () => {
               </SelectContent>
             </Select>
             
-            {/* Filters */}
             <Sheet>
               <SheetTrigger asChild>
                 <Button variant="outline" className="flex items-center gap-2">
@@ -270,16 +266,17 @@ const Properties = () => {
                   
                   <div>
                     <h3 className="text-sm font-medium mb-3">Property Type</h3>
-                    <Select value={propertyType} onValueChange={setPropertyType}>
+                    <Select 
+                      value={propertyType} 
+                      onValueChange={(value: "sale" | "rent" | "all") => setPropertyType(value)}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Any" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">Any</SelectItem>
-                        <SelectItem value="house">House</SelectItem>
-                        <SelectItem value="apartment">Apartment</SelectItem>
-                        <SelectItem value="condo">Condo</SelectItem>
-                        <SelectItem value="villa">Villa</SelectItem>
+                        <SelectItem value="all">All Types</SelectItem>
+                        <SelectItem value="sale">For Sale</SelectItem>
+                        <SelectItem value="rent">For Rent</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -287,7 +284,6 @@ const Properties = () => {
                   <Button 
                     className="w-full mt-6"
                     onClick={() => {
-                      // Reset filters
                       setSearchQuery("");
                       setPriceRange([1000000, 8000000]);
                       setBedrooms("");
@@ -302,14 +298,12 @@ const Properties = () => {
             </Sheet>
           </div>
           
-          {/* Results Count */}
           <div className="mb-6">
             <p className="text-estate-500">
               {filteredProperties.length} {filteredProperties.length === 1 ? 'property' : 'properties'} found
             </p>
           </div>
           
-          {/* Property Grid */}
           {filteredProperties.length > 0 ? (
             <PropertyGrid 
               properties={filteredProperties} 
