@@ -1,36 +1,39 @@
 
 import { useState } from "react";
-import { Search } from "lucide-react";
+import { Search, MapPin } from "lucide-react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
+import { useNavigate } from "react-router-dom";
 
 const SearchBar = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      // In a real app, this would navigate to search results
-      console.log("Searching for:", searchQuery);
-      alert(`Searching for properties in: ${searchQuery}`);
+      navigate(`/properties?search=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
 
   return (
-    <form onSubmit={handleSearch} className="relative w-full max-w-2xl bg-white/95 rounded-full overflow-hidden shadow-xl">
-      <Input
-        type="text"
-        placeholder="Search properties by location..."
-        className="pl-14 pr-28 py-7 w-full border-none text-lg font-medium"
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-      />
-      <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-estate-500 w-5 h-5" />
+    <form onSubmit={handleSearch} className="flex gap-2">
+      <div className="relative flex-grow">
+        <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-estate-400 w-5 h-5" />
+        <Input
+          type="text"
+          placeholder="Search by location..."
+          className="pl-10 pr-4 py-6 w-full bg-white/10 border-white/20 text-white placeholder:text-white/60"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </div>
       <Button 
         type="submit" 
-        className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full px-6 py-2.5 text-sm font-semibold bg-estate-800 hover:bg-estate-700 transition-colors"
+        size="lg"
+        className="px-8 bg-estate-800 hover:bg-estate-700 transition-colors"
       >
-        Search
+        <Search className="w-5 h-5" />
       </Button>
     </form>
   );
