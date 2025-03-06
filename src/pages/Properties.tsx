@@ -125,7 +125,7 @@ const Properties = () => {
   const [filteredProperties, setFilteredProperties] = useState(allProperties);
 
   useEffect(() => {
-    let filtered = propertiesData;
+    let filtered = allProperties;
     
     if (searchQuery) {
       filtered = filtered.filter(property => 
@@ -287,7 +287,7 @@ const Properties = () => {
                       setSearchQuery("");
                       setPriceRange([1000000, 8000000]);
                       setBedrooms("");
-                      setPropertyType("");
+                      setPropertyType("all");
                     }}
                     variant="outline"
                   >
