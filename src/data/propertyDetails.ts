@@ -12,7 +12,11 @@ export const properties = [
       "https://images.unsplash.com/photo-1518005020951-eccb494ad742",
       "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9",
       "https://images.unsplash.com/photo-1600585154340-be6161a56a0c"
-    ]
+    ],
+    coordinates: {
+      lat: 39.1911,
+      lng: -106.8175
+    }
   },
   {
     id: "2",
@@ -26,7 +30,11 @@ export const properties = [
       "https://images.unsplash.com/photo-1524230572899-a752b3835840",
       "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d",
       "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3"
-    ]
+    ],
+    coordinates: {
+      lat: 34.0736,
+      lng: -118.4004
+    }
   },
   {
     id: "3",
@@ -40,7 +48,11 @@ export const properties = [
       "https://images.unsplash.com/photo-1433832597046-4f10e10ac764",
       "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d",
       "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3"
-    ]
+    ],
+    coordinates: {
+      lat: 40.7831,
+      lng: -73.9712
+    }
   },
   {
     id: "4",
@@ -54,6 +66,10 @@ export const properties = [
       "https://images.unsplash.com/photo-1486718448742-163732cd1544",
       "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d",
       "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3"
-    ]
+    ],
+    coordinates: {
+      lat: 39.0968,
+      lng: -120.0324
+    }
   }
 ];

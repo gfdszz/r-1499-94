@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
@@ -10,6 +9,7 @@ import PropertyHeader from "@/components/property/PropertyHeader";
 import PropertyFeatures from "@/components/property/PropertyFeatures";
 import PropertyDescription from "@/components/property/PropertyDescription";
 import PropertyActions from "@/components/property/PropertyActions";
+import PropertyMap from "@/components/property/PropertyMap";
 import { properties } from "@/data/propertyDetails";
 
 const PropertyDetails = () => {
@@ -63,6 +63,11 @@ const PropertyDetails = () => {
             <PropertyGallery 
               images={property.images} 
               title={property.title} 
+            />
+            
+            <PropertyMap
+              location={property.location}
+              coordinates={property.coordinates}
             />
           </div>
           
