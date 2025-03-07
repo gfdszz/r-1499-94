@@ -28,14 +28,15 @@ const PropertyGrid = ({ properties: propProperties, loading = false, filterType 
   useEffect(() => {
     setIsLoading(true);
     
-    const timer = setTimeout(() => {
+    // Use requestAnimationFrame for smoother loading
+    const loadProperties = () => {
       if (propProperties) {
         setProperties(propProperties);
       } else {
         setProperties([
           {
             id: "1",
-            image: "https://images.unsplash.com/photo-1518005020951-eccb494ad742",
+            image: "https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&q=75&fit=crop&w=800",
             title: "Forest Retreat",
             location: "Aspen, Colorado",
             price: "$2,450,000",
@@ -46,7 +47,7 @@ const PropertyGrid = ({ properties: propProperties, loading = false, filterType 
           },
           {
             id: "2",
-            image: "https://images.unsplash.com/photo-1524230572899-a752b3835840",
+            image: "https://images.unsplash.com/photo-1524230572899-a752b3835840?auto=format&q=75&fit=crop&w=800",
             title: "Modern Villa",
             location: "Beverly Hills, CA",
             price: "$5,900,000",
@@ -57,7 +58,7 @@ const PropertyGrid = ({ properties: propProperties, loading = false, filterType 
           },
           {
             id: "3",
-            image: "https://images.unsplash.com/photo-1433832597046-4f10e10ac764",
+            image: "https://images.unsplash.com/photo-1433832597046-4f10e10ac764?auto=format&q=75&fit=crop&w=800",
             title: "Urban Penthouse for Rent",
             location: "Manhattan, NY",
             price: "$15,000",
@@ -68,7 +69,7 @@ const PropertyGrid = ({ properties: propProperties, loading = false, filterType 
           },
           {
             id: "4",
-            image: "https://images.unsplash.com/photo-1486718448742-163732cd1544",
+            image: "https://images.unsplash.com/photo-1486718448742-163732cd1544?auto=format&q=75&fit=crop&w=800",
             title: "Lake House",
             location: "Lake Tahoe, NV",
             price: "$4,200,000",
@@ -80,7 +81,12 @@ const PropertyGrid = ({ properties: propProperties, loading = false, filterType 
         ]);
       }
       setIsLoading(false);
-    }, 500);
+    };
+
+    // Simulate network delay but make it shorter (250ms)
+    const timer = setTimeout(() => {
+      requestAnimationFrame(loadProperties);
+    }, 250);
     
     return () => clearTimeout(timer);
   }, [propProperties]);
@@ -92,8 +98,10 @@ const PropertyGrid = ({ properties: propProperties, loading = false, filterType 
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 max-w-6xl mx-auto">
-        {[1, 2, 3, 4].map((i) => (
-          <Skeleton key={i} className="h-[400px] w-full rounded-lg" />
+        {Array.from({ length: 4 }, (_, i) => (
+          <div key={i} className="animate-in fade-in duration-300" style={{ animationDelay: `${i * 100}ms` }}>
+            <Skeleton className="h-[400px] w-full rounded-lg" />
+          </div>
         ))}
       </div>
     );
@@ -101,8 +109,14 @@ const PropertyGrid = ({ properties: propProperties, loading = false, filterType 
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 max-w-7xl mx-auto px-4">
-      {filteredProperties.map((property) => (
-        <PropertyCard key={property.id} {...property} type={property.type} />
+      {filteredProperties.map((property, index) => (
+        <div 
+          key={property.id} 
+          className="animate-in fade-in duration-300" 
+          style={{ animationDelay: `${index * 100}ms` }}
+        >
+          <PropertyCard {...property} type={property.type} />
+        </div>
       ))}
     </div>
   );
