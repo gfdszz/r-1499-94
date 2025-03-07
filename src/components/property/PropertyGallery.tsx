@@ -1,5 +1,5 @@
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { 
   Carousel, 
@@ -10,6 +10,7 @@ import {
   type CarouselApi 
 } from "@/components/ui/carousel";
 import { cn } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface PropertyGalleryProps {
   images: string[];
@@ -19,6 +20,9 @@ interface PropertyGalleryProps {
 const PropertyGallery = ({ images, title }: PropertyGalleryProps) => {
   const [currentImage, setCurrentImage] = useState(0);
   const [api, setApi] = useState<CarouselApi>();
+  const [imagesLoaded, setImagesLoaded] = useState<Record<number, boolean>>({});
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const imageRefs = useRef<(HTMLImageElement | null)[]>([]);
 
   // Handle thumbnail click
   const handleThumbnailClick = (index: number) => {
@@ -32,6 +36,11 @@ const PropertyGallery = ({ images, title }: PropertyGalleryProps) => {
     const selectedIndex = api.selectedScrollSnap();
     setCurrentImage(selectedIndex);
   }, [api]);
+
+  // Image load handler
+  const handleImageLoad = (index: number) => {
+    setImagesLoaded(prev => ({ ...prev, [index]: true }));
+  };
 
   // Connect the onSelect callback to the carousel's events
   useEffect(() => {
@@ -47,6 +56,51 @@ const PropertyGallery = ({ images, title }: PropertyGalleryProps) => {
     };
   }, [api, onSelect]);
 
+  // Setup intersection observer for lazy loading
+  useEffect(() => {
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const img = entry.target as HTMLImageElement;
+            const dataSrc = img.dataset.src;
+            if (dataSrc) {
+              img.src = dataSrc;
+              img.removeAttribute('data-src');
+              observerRef.current?.unobserve(img);
+            }
+          }
+        });
+      },
+      { rootMargin: '200px' }
+    );
+
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, []);
+
+  // Initialize image refs and observe them
+  useEffect(() => {
+    imageRefs.current = imageRefs.current.slice(0, images.length);
+    
+    imageRefs.current.forEach((img) => {
+      if (img && observerRef.current) {
+        observerRef.current.observe(img);
+      }
+    });
+
+    return () => {
+      if (observerRef.current) {
+        imageRefs.current.forEach((img) => {
+          if (img) observerRef.current?.unobserve(img);
+        });
+      }
+    };
+  }, [images]);
+
   return (
     <div className="space-y-4">
       <div className="relative">
@@ -61,11 +115,21 @@ const PropertyGallery = ({ images, title }: PropertyGalleryProps) => {
         >
           <CarouselContent>
             {images.map((image, index) => (
-              <CarouselItem key={index} className="overflow-hidden rounded-lg aspect-[16/9]">
+              <CarouselItem key={index} className="overflow-hidden rounded-lg aspect-[16/9] relative">
+                {!imagesLoaded[index] && (
+                  <Skeleton className="w-full h-full absolute inset-0 bg-gray-200" />
+                )}
                 <img 
-                  src={image} 
+                  ref={el => imageRefs.current[index] = el}
+                  data-src={image}
+                  src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
                   alt={`${title} - view ${index + 1}`} 
-                  className="w-full h-full object-cover"
+                  className={cn(
+                    "w-full h-full object-cover transition-opacity duration-300",
+                    imagesLoaded[index] ? "opacity-100" : "opacity-0"
+                  )}
+                  onLoad={() => handleImageLoad(index)}
+                  loading="lazy"
                 />
               </CarouselItem>
             ))}
@@ -89,11 +153,23 @@ const PropertyGallery = ({ images, title }: PropertyGalleryProps) => {
             )}
             onClick={() => handleThumbnailClick(index)}
           >
-            <img 
-              src={image} 
-              alt={`${title} - thumbnail ${index + 1}`} 
-              className="w-full h-full object-cover"
-            />
+            <div className="relative w-full h-full">
+              {!imagesLoaded[index] && (
+                <Skeleton className="w-full h-full absolute inset-0 bg-gray-200" />
+              )}
+              <img 
+                ref={el => imageRefs.current[index + images.length] = el}
+                data-src={image}
+                src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
+                alt={`${title} - thumbnail ${index + 1}`} 
+                className={cn(
+                  "w-full h-full object-cover transition-opacity duration-300",
+                  imagesLoaded[index] ? "opacity-100" : "opacity-0"
+                )}
+                onLoad={() => handleImageLoad(index)}
+                loading="lazy"
+              />
+            </div>
           </div>
         ))}
       </div>
