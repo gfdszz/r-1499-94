@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { 
   Carousel, 
@@ -9,7 +9,7 @@ import {
   CarouselPrevious 
 } from "@/components/ui/carousel";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import { type CarouselApi } from "embla-carousel-react";
 
 interface PropertyGalleryProps {
   images: string[];
@@ -18,11 +18,34 @@ interface PropertyGalleryProps {
 
 const PropertyGallery = ({ images, title }: PropertyGalleryProps) => {
   const [currentImage, setCurrentImage] = useState(0);
+  const [api, setApi] = useState<CarouselApi>();
 
   // Handle thumbnail click
   const handleThumbnailClick = (index: number) => {
     setCurrentImage(index);
+    api?.scrollTo(index);
   };
+
+  // Update the current image index when the carousel slides
+  const onSelect = useCallback(() => {
+    if (!api) return;
+    const selectedIndex = api.selectedScrollSnap();
+    setCurrentImage(selectedIndex);
+  }, [api]);
+
+  // Connect the onSelect callback to the carousel's events
+  useEffect(() => {
+    if (!api) return;
+    
+    api.on("select", onSelect);
+    // Initial call to set the starting slide
+    onSelect();
+
+    // Cleanup
+    return () => {
+      api.off("select", onSelect);
+    };
+  }, [api, onSelect]);
 
   return (
     <div className="space-y-4">
@@ -34,13 +57,7 @@ const PropertyGallery = ({ images, title }: PropertyGalleryProps) => {
             align: "start",
             loop: true,
           }}
-          onSlideChange={(api) => {
-            const current = api?.selectedScrollSnap();
-            if (typeof current === 'number') {
-              setCurrentImage(current);
-            }
-          }}
-          defaultSlide={currentImage}
+          setApi={setApi}
         >
           <CarouselContent>
             {images.map((image, index) => (
