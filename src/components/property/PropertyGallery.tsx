@@ -6,10 +6,10 @@ import {
   CarouselContent, 
   CarouselItem, 
   CarouselNext, 
-  CarouselPrevious 
+  CarouselPrevious,
+  type CarouselApi 
 } from "@/components/ui/carousel";
 import { cn } from "@/lib/utils";
-import { type CarouselApi } from "embla-carousel-react";
 
 interface PropertyGalleryProps {
   images: string[];
