@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
@@ -63,8 +64,8 @@ const PropertyDetails = () => {
   }
 
   // Handle both Supabase and demo property formats
-  const price = property.price.toString ? property.price.toString() : property.price;
-  const numericPrice = parseInt(price.replace(/[^0-9]/g, ""));
+  const price = property.price?.toString ? property.price.toString() : property.price;
+  const numericPrice = parseInt(price?.replace(/[^0-9]/g, "") || "0");
   const monthlyRent = Math.round(numericPrice * 0.004);
 
   return (
@@ -98,7 +99,11 @@ const PropertyDetails = () => {
               monthlyRent={monthlyRent}
             />
             
-            <PropertyFeatures />
+            <PropertyFeatures 
+              bedrooms={property.bedrooms} 
+              bathrooms={property.bathrooms} 
+              sqft={property.area || property.sqft}
+            />
             
             <PropertyDescription 
               description={property.description}
