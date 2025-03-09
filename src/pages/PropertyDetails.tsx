@@ -11,19 +11,36 @@ import PropertyDescription from "@/components/property/PropertyDescription";
 import PropertyActions from "@/components/property/PropertyActions";
 import PropertyMap from "@/components/property/PropertyMap";
 import { properties } from "@/data/propertyDetails";
+import { useProperties } from "@/hooks/useProperties";
+import { mapSupabasePropertyToProperty } from "@/components/PropertyGrid";
 
 const PropertyDetails = () => {
   const { id } = useParams<{ id: string }>();
   const [property, setProperty] = useState<any>(null);
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
   const [isRental, setIsRental] = useState(false);
+  const { getPropertyById } = useProperties();
   
   useEffect(() => {
-    const foundProperty = properties.find(p => p.id === id);
-    if (foundProperty) {
-      setProperty(foundProperty);
-    }
-  }, [id]);
+    const fetchProperty = async () => {
+      // Try to fetch from Supabase first
+      if (id) {
+        const supabaseProperty = await getPropertyById(id);
+        if (supabaseProperty) {
+          setProperty(supabaseProperty);
+          return;
+        }
+      }
+
+      // Fallback to demo data
+      const foundProperty = properties.find(p => p.id === id);
+      if (foundProperty) {
+        setProperty(foundProperty);
+      }
+    };
+    
+    fetchProperty();
+  }, [id, getPropertyById]);
 
   const handlePayment = (rental: boolean) => {
     setIsRental(rental);
@@ -45,7 +62,9 @@ const PropertyDetails = () => {
     );
   }
 
-  const numericPrice = parseInt(property.price.replace(/[^0-9]/g, ""));
+  // Handle both Supabase and demo property formats
+  const price = property.price.toString ? property.price.toString() : property.price;
+  const numericPrice = parseInt(price.replace(/[^0-9]/g, ""));
   const monthlyRent = Math.round(numericPrice * 0.004);
 
   return (
@@ -61,7 +80,7 @@ const PropertyDetails = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           <div className="lg:col-span-2">
             <PropertyGallery 
-              images={property.images} 
+              images={property.images || [property.image]} 
               title={property.title} 
             />
             
@@ -75,7 +94,7 @@ const PropertyDetails = () => {
             <PropertyHeader 
               title={property.title}
               location={property.location}
-              price={property.price}
+              price={price}
               monthlyRent={monthlyRent}
             />
             
@@ -98,7 +117,7 @@ const PropertyDetails = () => {
         open={paymentModalOpen}
         onOpenChange={setPaymentModalOpen}
         propertyTitle={property?.title || ""}
-        price={property?.price || ""}
+        price={price || ""}
         isRental={isRental}
       />
       

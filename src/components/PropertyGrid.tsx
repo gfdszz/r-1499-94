@@ -2,26 +2,39 @@
 import PropertyCard from "./PropertyCard";
 import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Property as SupabaseProperty } from "@/lib/supabase";
+import { Property } from "@/types/property";
 
-interface Property {
-  id: string;
-  image: string;
-  title: string;
-  location: string;
-  price: string;
-  bedrooms?: number;
-  bathrooms?: number;
-  area?: number;
-  type: 'sale' | 'rent';
-}
+// Function to convert Supabase property to frontend property
+export const mapSupabasePropertyToProperty = (property: SupabaseProperty): Property => {
+  return {
+    id: property.id,
+    image: property.images && property.images.length > 0 
+      ? property.images[0] 
+      : "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9",
+    title: property.title,
+    location: property.location,
+    price: `$${property.price.toLocaleString()}`,
+    bedrooms: property.bedrooms,
+    bathrooms: property.bathrooms,
+    area: property.area,
+    type: property.type,
+  };
+};
 
 interface PropertyGridProps {
-  properties?: Property[];
+  properties?: Property[] | SupabaseProperty[];
   loading?: boolean;
   filterType?: 'sale' | 'rent' | 'all';
+  fromSupabase?: boolean;
 }
 
-const PropertyGrid = ({ properties: propProperties, loading = false, filterType = 'all' }: PropertyGridProps) => {
+const PropertyGrid = ({ 
+  properties: propProperties, 
+  loading = false, 
+  filterType = 'all',
+  fromSupabase = false
+}: PropertyGridProps) => {
   const [properties, setProperties] = useState<Property[]>([]);
   const [isLoading, setIsLoading] = useState(loading);
   
@@ -31,7 +44,15 @@ const PropertyGrid = ({ properties: propProperties, loading = false, filterType 
     // Use requestAnimationFrame for smoother loading
     const loadProperties = () => {
       if (propProperties) {
-        setProperties(propProperties);
+        if (fromSupabase) {
+          // Convert Supabase properties to frontend properties
+          const convertedProperties = (propProperties as SupabaseProperty[]).map(
+            mapSupabasePropertyToProperty
+          );
+          setProperties(convertedProperties);
+        } else {
+          setProperties(propProperties as Property[]);
+        }
       } else {
         setProperties([
           {
@@ -89,7 +110,7 @@ const PropertyGrid = ({ properties: propProperties, loading = false, filterType 
     }, 250);
     
     return () => clearTimeout(timer);
-  }, [propProperties]);
+  }, [propProperties, fromSupabase]);
 
   const filteredProperties = filterType === 'all' 
     ? properties 

@@ -68,7 +68,8 @@ const Dashboard = () => {
                 {properties.length > 0 ? (
                   <PropertyGrid 
                     properties={properties.filter(p => p.user_id === user?.id)} 
-                    loading={loading} 
+                    loading={loading}
+                    fromSupabase={true}
                   />
                 ) : (
                   <div className="text-center py-12">
