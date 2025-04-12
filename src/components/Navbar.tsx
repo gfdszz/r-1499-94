@@ -1,7 +1,7 @@
 
 import { Menu } from "lucide-react";
 import { Button } from "./ui/button";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import {
   Sheet,
   SheetContent,
@@ -10,13 +10,17 @@ import {
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Determine if this is the home page (for styling)
+  const isHomePage = location.pathname === "/";
 
   const handleGetStarted = () => {
     navigate("/contact");
   };
 
   return (
-    <nav className="absolute w-full z-50">
+    <nav className={`${isHomePage ? 'absolute' : ''} w-full z-50 ${!isHomePage ? 'bg-estate-800 py-4' : ''}`}>
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="flex items-center justify-between h-24">
           <Link to="/" className="text-3xl font-display text-white tracking-wide hover:opacity-90 transition-opacity">Elite Real Estate</Link>
