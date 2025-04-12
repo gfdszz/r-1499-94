@@ -14,7 +14,24 @@ if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KE
   );
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+let supabaseInstance;
+try {
+  supabaseInstance = createClient(supabaseUrl, supabaseAnonKey);
+} catch (error) {
+  console.error('Failed to initialize Supabase client:', error);
+  // Provide a mock client that doesn't cause the app to crash
+  supabaseInstance = {
+    auth: {
+      getSession: () => Promise.resolve({ data: { session: null }, error: null }),
+      onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
+      signInWithPassword: () => Promise.resolve({ error: new Error('Supabase not properly configured') }),
+      signUp: () => Promise.resolve({ error: new Error('Supabase not properly configured') }),
+      signOut: () => Promise.resolve({ error: null }),
+    },
+  };
+}
+
+export const supabase = supabaseInstance;
 
 // Types for our Supabase tables
 export type PropertyInsert = {
