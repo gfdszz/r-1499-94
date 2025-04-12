@@ -1,5 +1,5 @@
 
-import { Search, MapPin } from "lucide-react";
+import { Search, MapPin, SlidersHorizontal } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { 
@@ -15,9 +15,12 @@ interface SearchFormProps {
   setSearchQuery: (value: string) => void;
   propertyType: "sale" | "rent" | "all";
   setPropertyType: React.Dispatch<React.SetStateAction<"sale" | "rent" | "all">>;
+  sortBy: string;
+  setSortBy: (value: string) => void;
   handleSearch: (e: React.FormEvent) => void;
   searchParams: URLSearchParams;
   setSearchParams: (searchParams: URLSearchParams) => void;
+  toggleMobileFilters?: () => void;
 }
 
 export const SearchForm = ({
@@ -25,9 +28,12 @@ export const SearchForm = ({
   setSearchQuery,
   propertyType,
   setPropertyType,
+  sortBy,
+  setSortBy,
   handleSearch,
   searchParams,
-  setSearchParams
+  setSearchParams,
+  toggleMobileFilters
 }: SearchFormProps) => {
   return (
     <form onSubmit={handleSearch} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">

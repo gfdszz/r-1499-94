@@ -7,11 +7,17 @@ import { FilterSidebar } from "@/components/properties/FilterSidebar";
 import { usePropertyFilters } from "@/hooks/usePropertyFilters";
 import { useSearchParams } from "react-router-dom";
 import { PropertyType } from "@/types/property";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useState } from "react";
+import { SlidersHorizontal } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const Properties = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const initialSearch = searchParams.get("search") || "";
   const initialType = (searchParams.get("type") as PropertyType) || "all";
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
   
   const {
     searchQuery,
@@ -22,8 +28,17 @@ const Properties = () => {
     setPriceRange,
     bedrooms,
     setBedrooms,
+    bathrooms,
+    setBathrooms,
+    minArea,
+    setMinArea,
+    maxArea,
+    setMaxArea,
+    sortBy,
+    setSortBy,
     filteredProperties,
     resetFilters,
+    loading
   } = usePropertyFilters(initialSearch, initialType);
 
   const handleSearch = (e: React.FormEvent) => {
@@ -34,6 +49,10 @@ const Properties = () => {
       searchParams.delete("search");
     }
     setSearchParams(searchParams);
+  };
+
+  const toggleMobileFilters = () => {
+    setShowMobileFilters(!showMobileFilters);
   };
 
   return (
@@ -56,9 +75,12 @@ const Properties = () => {
             setSearchQuery={setSearchQuery}
             propertyType={propertyType}
             setPropertyType={setPropertyType}
+            sortBy={sortBy}
+            setSortBy={setSortBy}
             handleSearch={handleSearch}
             searchParams={searchParams}
             setSearchParams={setSearchParams}
+            toggleMobileFilters={toggleMobileFilters}
           />
           
           <div className="flex flex-col lg:flex-row gap-8 mt-8">
@@ -68,6 +90,12 @@ const Properties = () => {
                 setPriceRange={setPriceRange}
                 bedrooms={bedrooms}
                 setBedrooms={setBedrooms}
+                bathrooms={bathrooms}
+                setBathrooms={setBathrooms}
+                minArea={minArea}
+                setMinArea={setMinArea}
+                maxArea={maxArea}
+                setMaxArea={setMaxArea}
                 propertyType={propertyType}
                 setPropertyType={setPropertyType}
                 resetFilters={resetFilters}
@@ -76,20 +104,67 @@ const Properties = () => {
             
             <div className="flex-1">
               <div className="bg-white rounded-lg p-4 mb-6 shadow-sm border border-gray-100">
-                <div className="flex justify-between items-center">
+                <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
                   <p className="text-estate-600 font-medium">
                     {filteredProperties.length} {filteredProperties.length === 1 ? 'property' : 'properties'} found
                   </p>
-                  <div className="flex items-center gap-2">
-                    {/* Add sorting options here if needed */}
+                  <div className="flex items-center gap-2 w-full sm:w-auto">
+                    {/* Mobile filters button */}
+                    <Sheet open={showMobileFilters} onOpenChange={setShowMobileFilters}>
+                      <SheetTrigger asChild className="lg:hidden">
+                        <Button variant="outline" className="flex items-center gap-2">
+                          <SlidersHorizontal className="w-4 h-4" />
+                          Filters
+                        </Button>
+                      </SheetTrigger>
+                      <SheetContent>
+                        <div className="pt-6">
+                          <FilterSidebar 
+                            priceRange={priceRange}
+                            setPriceRange={setPriceRange}
+                            bedrooms={bedrooms}
+                            setBedrooms={setBedrooms}
+                            bathrooms={bathrooms}
+                            setBathrooms={setBathrooms}
+                            minArea={minArea}
+                            setMinArea={setMinArea}
+                            maxArea={maxArea}
+                            setMaxArea={setMaxArea}
+                            propertyType={propertyType}
+                            setPropertyType={setPropertyType}
+                            resetFilters={resetFilters}
+                          />
+                        </div>
+                      </SheetContent>
+                    </Sheet>
+
+                    {/* Sort dropdown */}
+                    <Select value={sortBy} onValueChange={setSortBy}>
+                      <SelectTrigger className="w-full sm:w-[180px]">
+                        <SelectValue placeholder="Sort by" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="newest">Newest</SelectItem>
+                        <SelectItem value="oldest">Oldest</SelectItem>
+                        <SelectItem value="price-low">Price: Low to High</SelectItem>
+                        <SelectItem value="price-high">Price: High to Low</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
               </div>
 
-              {filteredProperties.length > 0 ? (
+              {loading ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto px-4">
+                  {[1, 2, 3, 4, 5, 6].map((i) => (
+                    <div key={i} className="animate-pulse bg-gray-200 rounded-lg h-[400px]"></div>
+                  ))}
+                </div>
+              ) : filteredProperties.length > 0 ? (
                 <PropertyGrid 
                   properties={filteredProperties} 
                   filterType={propertyType === "all" ? undefined : propertyType}
+                  fromSupabase={true}
                 />
               ) : (
                 <div className="text-center py-16 bg-white rounded-lg border border-gray-100">
