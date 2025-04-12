@@ -13,7 +13,6 @@ import PropertyActions from "@/components/property/PropertyActions";
 import PropertyMap from "@/components/property/PropertyMap";
 import { properties } from "@/data/propertyDetails";
 import { useProperties } from "@/hooks/useProperties";
-import { mapSupabasePropertyToProperty } from "@/components/PropertyGrid";
 
 const PropertyDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -67,6 +66,7 @@ const PropertyDetails = () => {
   const price = property.price?.toString ? property.price.toString() : property.price;
   const numericPrice = parseInt(price?.replace(/[^0-9]/g, "") || "0");
   const monthlyRent = Math.round(numericPrice * 0.004);
+  const propertyId = property.id || id || "1";
 
   return (
     <div className="min-h-screen bg-white">
@@ -112,6 +112,7 @@ const PropertyDetails = () => {
             
             <PropertyActions 
               title={property.title}
+              propertyId={propertyId}
               onPayment={handlePayment}
             />
           </div>

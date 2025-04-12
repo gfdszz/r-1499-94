@@ -1,14 +1,16 @@
 
-import { Share, Heart, Home, CreditCard } from "lucide-react";
+import { Share, Home, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
+import FavoriteButton from "@/components/FavoriteButton";
 
 interface PropertyActionsProps {
   title: string;
+  propertyId: string;
   onPayment: (rental: boolean) => void;
 }
 
-const PropertyActions = ({ title, onPayment }: PropertyActionsProps) => {
+const PropertyActions = ({ title, propertyId, onPayment }: PropertyActionsProps) => {
   const handleContactAgent = () => {
     toast({
       title: "Request Sent",
@@ -20,13 +22,6 @@ const PropertyActions = ({ title, onPayment }: PropertyActionsProps) => {
     toast({
       title: "Viewing Scheduled",
       description: "Check your email for confirmation details.",
-    });
-  };
-
-  const handleSaveProperty = () => {
-    toast({
-      title: "Property Saved",
-      description: "This property has been added to your favorites.",
     });
   };
 
@@ -76,14 +71,11 @@ const PropertyActions = ({ title, onPayment }: PropertyActionsProps) => {
           Schedule Viewing
         </Button>
         <div className="flex space-x-3">
-          <Button
-            onClick={handleSaveProperty}
+          <FavoriteButton
+            propertyId={propertyId}
             variant="outline"
             className="flex-1 border-estate-300 text-estate-600 hover:bg-estate-50"
-          >
-            <Heart className="w-4 h-4 mr-2" />
-            Save
-          </Button>
+          />
           <Button
             onClick={handleShareProperty}
             variant="outline"

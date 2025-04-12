@@ -2,7 +2,7 @@
 import { MapPin, Bed, Bath, Square, Home, Tag } from "lucide-react";
 import { Card, CardContent } from "./ui/card";
 import { Link } from "react-router-dom";
-import { Button } from "./ui/button";
+import FavoriteButton from "./FavoriteButton";
 
 interface PropertyCardProps {
   image: string;
@@ -46,6 +46,17 @@ const PropertyCard = ({
             <div className={`absolute top-3 left-3 ${type === 'sale' ? 'bg-blue-500/90' : 'bg-green-500/90'} backdrop-blur-sm text-white px-3 py-1.5 text-sm font-medium rounded-md flex items-center gap-1`}>
               {type === 'sale' ? <Tag className="w-4 h-4" /> : <Home className="w-4 h-4" />}
               {type === 'sale' ? 'For Sale' : 'For Rent'}
+            </div>
+            
+            {/* Add favorite button */}
+            <div className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <FavoriteButton 
+                propertyId={id} 
+                variant="outline" 
+                size="sm"
+                className="bg-white/90 backdrop-blur-sm hover:bg-white"
+                showText={false}
+              />
             </div>
           </div>
           <div className="p-5">

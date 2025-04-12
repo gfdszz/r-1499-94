@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -6,10 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useProperties } from "@/hooks/useProperties";
+import { useFavorites } from "@/hooks/useFavorites";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PropertyGrid from "@/components/PropertyGrid";
-import { Plus, Settings, User, Heart, MessageCircle } from "lucide-react";
+import { Plus, Settings, User, Heart, MessageCircle, Loader2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
@@ -18,6 +18,7 @@ const Dashboard = () => {
   const { user, isLoading, signOut } = useAuth();
   const navigate = useNavigate();
   const { properties, loading } = useProperties();
+  const { favorites, loading: favoritesLoading, refreshFavorites } = useFavorites();
   const [profileProgress, setProfileProgress] = useState(65);
   
   useEffect(() => {
@@ -51,6 +52,12 @@ const Dashboard = () => {
   
   // Filter to get only user's properties
   const userProperties = properties.filter(p => p.user_id === user?.id);
+
+  // Map favorites to property format that PropertyGrid can display
+  const favoriteProperties = favorites.map(fav => ({
+    id: fav.property_id,
+    ...fav.properties,
+  }));
   
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
@@ -177,16 +184,28 @@ const Dashboard = () => {
                 <CardDescription>View your saved properties</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="text-center py-12">
-                  <h3 className="text-xl font-medium text-estate-800 mb-2">No favorites yet</h3>
-                  <p className="text-estate-500 mb-6">Browse properties and save your favorites</p>
-                  <Button 
-                    onClick={() => navigate("/properties")}
-                    className="bg-estate-800 hover:bg-estate-700"
-                  >
-                    Browse Properties
-                  </Button>
-                </div>
+                {favoritesLoading ? (
+                  <div className="flex justify-center py-12">
+                    <Loader2 className="h-8 w-8 animate-spin text-estate-800" />
+                  </div>
+                ) : favoriteProperties.length > 0 ? (
+                  <PropertyGrid 
+                    properties={favoriteProperties} 
+                    loading={false}
+                    fromSupabase={true}
+                  />
+                ) : (
+                  <div className="text-center py-12">
+                    <h3 className="text-xl font-medium text-estate-800 mb-2">No favorites yet</h3>
+                    <p className="text-estate-500 mb-6">Browse properties and save your favorites</p>
+                    <Button 
+                      onClick={() => navigate("/properties")}
+                      className="bg-estate-800 hover:bg-estate-700"
+                    >
+                      Browse Properties
+                    </Button>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
