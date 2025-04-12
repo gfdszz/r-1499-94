@@ -27,18 +27,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const { data, error } = await supabase.auth.getSession();
         
         if (error) {
-          throw error;
+          console.error('Supabase session error:', error);
+          // Don't throw here, just log the error
         }
         
-        setSession(data.session);
-        setUser(data.session?.user || null);
+        setSession(data?.session || null);
+        setUser(data?.session?.user || null);
       } catch (error) {
         console.error('Error loading session:', error);
-        toast({
-          title: 'Authentication Error',
-          description: 'Failed to load user session',
-          variant: 'destructive',
-        });
+        // Show toast only if it's not a connection issue
+        if (!(error instanceof Error && error.message.includes('supabaseUrl'))) {
+          toast({
+            title: 'Authentication Error',
+            description: 'Failed to load user session',
+            variant: 'destructive',
+          });
+        }
       } finally {
         setIsLoading(false);
       }
@@ -47,16 +51,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // Initial session fetch
     getSession();
 
-    // Listen for auth changes
-    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      setUser(session?.user || null);
-      setIsLoading(false);
-    });
+    try {
+      // Listen for auth changes
+      const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+        setSession(session);
+        setUser(session?.user || null);
+        setIsLoading(false);
+      });
 
-    return () => {
-      authListener.subscription.unsubscribe();
-    };
+      return () => {
+        if (authListener?.subscription) {
+          authListener.subscription.unsubscribe();
+        }
+      };
+    } catch (error) {
+      console.error('Error setting up auth listener:', error);
+      setIsLoading(false);
+      return () => {};
+    }
   }, []);
 
   const signIn = async (email: string, password: string) => {
