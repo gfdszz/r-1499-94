@@ -142,7 +142,7 @@ const PropertyGrid = ({
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8 max-w-6xl mx-auto">
         {Array.from({ length: 4 }, (_, i) => (
           <div key={i} className="animate-pulse" style={{ animationDelay: `${i * 100}ms` }}>
-            <Skeleton className="h-[400px] w-full rounded-lg" />
+            <Skeleton className="h-[400px] w-full rounded-lg bg-gradient-to-b from-estate-100 to-estate-50" />
           </div>
         ))}
       </div>
@@ -154,7 +154,7 @@ const PropertyGrid = ({
       {filteredProperties.map((property, index) => (
         <div 
           key={property.id}
-          className="opacity-0 animate-fadeIn"
+          className="opacity-0 animate-fadeIn transform transition-all duration-500"
           style={{ 
             animationDelay: `${(hasRendered || !isInView) ? 0 : index * 150 + 300}ms`,
             animationFillMode: 'forwards',
