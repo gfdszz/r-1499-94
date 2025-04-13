@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Search, MapPin } from "lucide-react";
+import { Search, MapPin, Loader2 } from "lucide-react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
@@ -9,12 +9,17 @@ import { cn } from "@/lib/utils";
 const SearchBar = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isFocused, setIsFocused] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
   const navigate = useNavigate();
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
+      setIsSearching(true);
+      // Simulate a small delay for better UX
+      await new Promise(resolve => setTimeout(resolve, 500));
       navigate(`/properties?search=${encodeURIComponent(searchQuery.trim())}`);
+      setIsSearching(false);
     }
   };
 
@@ -42,8 +47,13 @@ const SearchBar = () => {
         type="submit" 
         size="lg"
         className="px-8 bg-estate-800 hover:bg-amber-800 transition-colors duration-300 border border-amber-700/30 hover:border-amber-700"
+        disabled={isSearching}
       >
-        <Search className="w-5 h-5" />
+        {isSearching ? (
+          <Loader2 className="w-5 h-5 animate-spin" />
+        ) : (
+          <Search className="w-5 h-5" />
+        )}
       </Button>
     </form>
   );

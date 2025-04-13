@@ -1,5 +1,5 @@
 
-import { Search, MapPin, SlidersHorizontal } from "lucide-react";
+import { Search, MapPin, SlidersHorizontal, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { 
@@ -21,6 +21,7 @@ interface SearchFormProps {
   searchParams: URLSearchParams;
   setSearchParams: (searchParams: URLSearchParams) => void;
   toggleMobileFilters?: () => void;
+  loading?: boolean;
 }
 
 export const SearchForm = ({
@@ -33,17 +34,18 @@ export const SearchForm = ({
   handleSearch,
   searchParams,
   setSearchParams,
-  toggleMobileFilters
+  toggleMobileFilters,
+  loading = false
 }: SearchFormProps) => {
   return (
-    <form onSubmit={handleSearch} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+    <form onSubmit={handleSearch} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-md">
       <div className="flex flex-col md:flex-row gap-4">
-        <div className="flex-grow relative">
-          <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-estate-400 w-5 h-5" />
+        <div className="flex-grow relative group">
+          <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-estate-400 group-hover:text-estate-600 w-5 h-5 transition-colors" />
           <Input
             type="text"
             placeholder="Search by location or property name..."
-            className="pl-10 py-6 w-full border-estate-200 focus:border-estate-300"
+            className="pl-10 py-6 w-full border-estate-200 focus:border-estate-300 transition-all"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -72,10 +74,31 @@ export const SearchForm = ({
             </SelectContent>
           </Select>
           
-          <Button type="submit" size="lg" className="bg-estate-800 hover:bg-estate-700">
-            <Search className="w-5 h-5 mr-2" />
+          <Button 
+            type="submit" 
+            size="lg" 
+            className="bg-estate-800 hover:bg-estate-700 transition-colors"
+            disabled={loading}
+          >
+            {loading ? (
+              <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+            ) : (
+              <Search className="w-5 h-5 mr-2" />
+            )}
             Search
           </Button>
+          
+          {toggleMobileFilters && (
+            <Button 
+              type="button" 
+              variant="outline" 
+              size="icon"
+              className="md:hidden" 
+              onClick={toggleMobileFilters}
+            >
+              <SlidersHorizontal className="w-5 h-5" />
+            </Button>
+          )}
         </div>
       </div>
     </form>
