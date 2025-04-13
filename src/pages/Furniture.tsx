@@ -1,383 +1,376 @@
 
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect, useRef } from 'react';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { 
-  Armchair, 
-  BedDouble, 
-  Sofa, 
-  LampFloor, 
-  BookOpen, 
-  ShoppingCart,
-  Search,
-  Calendar
-} from "lucide-react";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { useForm } from "react-hook-form";
-import { toast } from "@/hooks/use-toast";
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from '@/components/ui/select';
+import { 
+  Card, 
+  CardContent 
+} from '@/components/ui/card';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { toast } from '@/hooks/use-toast';
+import { ChevronRight, UploadCloud, X, Check } from 'lucide-react';
 
-// Furniture categories and items
-const furnitureCategories = [
-  {
-    id: "living",
-    name: "Living Room",
-    icon: Sofa,
-    items: [
-      { id: "sofa1", name: "Modern Sectional Sofa", price: "$1,299", image: "placeholder.svg" },
-      { id: "chair1", name: "Accent Armchair", price: "$499", image: "placeholder.svg" },
-      { id: "coffee1", name: "Glass Coffee Table", price: "$349", image: "placeholder.svg" },
-      { id: "lamp1", name: "Floor Lamp", price: "$129", image: "placeholder.svg" },
-    ]
-  },
-  {
-    id: "bedroom",
-    name: "Bedroom",
-    icon: BedDouble,
-    items: [
-      { id: "bed1", name: "Queen Platform Bed", price: "$899", image: "placeholder.svg" },
-      { id: "dresser1", name: "6-Drawer Dresser", price: "$649", image: "placeholder.svg" },
-      { id: "nightstand1", name: "Nightstand Set", price: "$299", image: "placeholder.svg" },
-      { id: "mirror1", name: "Full-Length Mirror", price: "$199", image: "placeholder.svg" },
-    ]
-  },
-  {
-    id: "dining",
-    name: "Dining Room",
-    icon: BookOpen,
-    items: [
-      { id: "table1", name: "Expandable Dining Table", price: "$799", image: "placeholder.svg" },
-      { id: "chairs1", name: "Set of 4 Dining Chairs", price: "$599", image: "placeholder.svg" },
-      { id: "buffet1", name: "Sideboard Buffet", price: "$649", image: "placeholder.svg" },
-      { id: "bar1", name: "Bar Cart", price: "$249", image: "placeholder.svg" },
-    ]
-  },
-  {
-    id: "office",
-    name: "Home Office",
-    icon: LampFloor,
-    items: [
-      { id: "desk1", name: "Writing Desk", price: "$399", image: "placeholder.svg" },
-      { id: "chair2", name: "Ergonomic Office Chair", price: "$349", image: "placeholder.svg" },
-      { id: "bookcase1", name: "5-Shelf Bookcase", price: "$259", image: "placeholder.svg" },
-      { id: "lamp2", name: "Desk Lamp", price: "$79", image: "placeholder.svg" },
-    ]
-  }
-];
+const FurnitureForm = () => {
+  const [furnitureType, setFurnitureType] = useState('');
+  const [condition, setCondition] = useState('');
+  const [images, setImages] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [formStep, setFormStep] = useState(1);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-const Furniture = () => {
-  const [selectedCategory, setSelectedCategory] = useState("living");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [cartItems, setCartItems] = useState<string[]>([]);
-
-  const form = useForm({
-    defaultValues: {
-      name: "",
-      email: "",
-      phone: "",
-      serviceType: "consultation",
-      date: "",
-      message: "",
-    },
-  });
-
-  const handleAddToCart = (itemId: string) => {
-    setCartItems([...cartItems, itemId]);
-    toast({
-      title: "Added to cart",
-      description: "Item has been added to your cart",
-    });
-  };
-
-  const handleRequestService = (values: any) => {
-    console.log("Service request submitted:", values);
-    toast({
-      title: "Service Request Submitted",
-      description: "Our team will contact you shortly to arrange your furniture service.",
-    });
-    form.reset();
-  };
-
-  // Filter items based on search query
-  const filteredItems = furnitureCategories
-    .find(cat => cat.id === selectedCategory)?.items
-    .filter(item => item.name.toLowerCase().includes(searchQuery.toLowerCase())) || [];
-
-  return (
-    <div className="min-h-screen bg-white">
-      <Navbar />
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const selectedFiles = Array.from(e.target.files);
+      const newImages = [...images, ...selectedFiles].slice(0, 5); // Limit to 5 images
+      setImages(newImages);
       
-      <div className="container mx-auto px-4 pt-24 pb-16">
-        <div className="text-center max-w-2xl mx-auto mb-12">
-          <h1 className="text-4xl md:text-5xl font-display text-estate-800 mb-4">
-            Home Furniture Collection
-          </h1>
-          <p className="text-estate-500 text-lg">
-            Browse our curated selection of premium furniture to transform your home
-          </p>
-        </div>
-        
-        <div className="flex flex-col md:flex-row gap-6 mb-8">
-          <div className="w-full md:w-3/4">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-              <div className="relative w-full sm:w-64">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
-                <Input 
-                  placeholder="Search furniture..." 
-                  className="pl-10" 
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
-              
-              <div className="flex items-center gap-2">
-                <Sheet>
-                  <SheetTrigger asChild>
-                    <Button variant="outline" className="relative">
-                      <ShoppingCart className="mr-2 h-4 w-4" />
-                      Cart
-                      {cartItems.length > 0 && (
-                        <Badge className="absolute -top-2 -right-2 bg-estate-600">{cartItems.length}</Badge>
-                      )}
-                    </Button>
-                  </SheetTrigger>
-                  <SheetContent>
-                    <SheetHeader>
-                      <SheetTitle>Your Cart</SheetTitle>
-                      <SheetDescription>
-                        {cartItems.length > 0 ? 
-                          `You have ${cartItems.length} items in your cart` : 
-                          "Your cart is empty"}
-                      </SheetDescription>
-                    </SheetHeader>
-                    {cartItems.length > 0 && (
-                      <div className="mt-6">
-                        <ul className="space-y-4">
-                          {cartItems.map((itemId, index) => {
-                            // Find the item across all categories
-                            const item = furnitureCategories.flatMap(cat => cat.items).find(i => i.id === itemId);
-                            return (
-                              <li key={index} className="flex justify-between items-center border-b pb-2">
-                                <span>{item?.name}</span>
-                                <span className="font-medium">{item?.price}</span>
-                              </li>
-                            );
-                          })}
-                        </ul>
-                        <Button className="mt-6 w-full bg-estate-800 hover:bg-estate-700">
-                          Checkout
-                        </Button>
-                      </div>
-                    )}
-                  </SheetContent>
-                </Sheet>
-                
-                <Sheet>
-                  <SheetTrigger asChild>
-                    <Button className="bg-estate-800 hover:bg-estate-700">
-                      <Calendar className="mr-2 h-4 w-4" />
-                      Request Service
-                    </Button>
-                  </SheetTrigger>
-                  <SheetContent>
-                    <SheetHeader>
-                      <SheetTitle>Request Furniture Service</SheetTitle>
-                      <SheetDescription>
-                        Fill in the details below and our team will contact you shortly.
-                      </SheetDescription>
-                    </SheetHeader>
-                    
-                    <div className="mt-6">
-                      <Form {...form}>
-                        <form onSubmit={form.handleSubmit(handleRequestService)} className="space-y-4">
-                          <FormField
-                            control={form.control}
-                            name="name"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Full Name</FormLabel>
-                                <FormControl>
-                                  <Input placeholder="Your name" {...field} required />
-                                </FormControl>
-                              </FormItem>
-                            )}
-                          />
-                          
-                          <FormField
-                            control={form.control}
-                            name="email"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Email</FormLabel>
-                                <FormControl>
-                                  <Input type="email" placeholder="Your email" {...field} required />
-                                </FormControl>
-                              </FormItem>
-                            )}
-                          />
-                          
-                          <FormField
-                            control={form.control}
-                            name="phone"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Phone</FormLabel>
-                                <FormControl>
-                                  <Input type="tel" placeholder="Your phone number" {...field} required />
-                                </FormControl>
-                              </FormItem>
-                            )}
-                          />
-                          
-                          <FormField
-                            control={form.control}
-                            name="serviceType"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Service Type</FormLabel>
-                                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                  <FormControl>
-                                    <SelectTrigger>
-                                      <SelectValue placeholder="Select service type" />
-                                    </SelectTrigger>
-                                  </FormControl>
-                                  <SelectContent>
-                                    <SelectItem value="consultation">Furniture Consultation</SelectItem>
-                                    <SelectItem value="delivery">Furniture Delivery</SelectItem>
-                                    <SelectItem value="assembly">Furniture Assembly</SelectItem>
-                                    <SelectItem value="repair">Repair & Maintenance</SelectItem>
-                                  </SelectContent>
-                                </Select>
-                              </FormItem>
-                            )}
-                          />
-                          
-                          <FormField
-                            control={form.control}
-                            name="message"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Message</FormLabel>
-                                <FormControl>
-                                  <textarea 
-                                    className="w-full min-h-[120px] border border-gray-300 rounded-md p-2"
-                                    placeholder="Describe your furniture needs..."
-                                    {...field}
-                                  ></textarea>
-                                </FormControl>
-                              </FormItem>
-                            )}
-                          />
-                          
-                          <Button type="submit" className="w-full bg-estate-800 hover:bg-estate-700">
-                            Submit Request
-                          </Button>
-                        </form>
-                      </Form>
-                    </div>
-                  </SheetContent>
-                </Sheet>
-              </div>
-            </div>
-            
-            <Tabs defaultValue={selectedCategory} onValueChange={setSelectedCategory} className="w-full">
-              <TabsList className="w-full justify-start mb-4 overflow-x-auto flex-nowrap">
-                {furnitureCategories.map((category) => (
-                  <TabsTrigger key={category.id} value={category.id} className="flex items-center">
-                    <category.icon className="mr-2 h-4 w-4" />
-                    <span>{category.name}</span>
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-              
-              {furnitureCategories.map((category) => (
-                <TabsContent key={category.id} value={category.id} className="mt-4">
-                  {filteredItems.length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {filteredItems.map((item) => (
-                        <Card key={item.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                          <div className="aspect-square bg-gray-100 relative">
-                            <img 
-                              src={`/${item.image}`} 
-                              alt={item.name} 
-                              className="object-cover w-full h-full" 
-                            />
-                          </div>
-                          <CardHeader>
-                            <CardTitle className="text-lg">{item.name}</CardTitle>
-                          </CardHeader>
-                          <CardContent>
-                            <p className="text-2xl font-medium text-estate-800">{item.price}</p>
-                          </CardContent>
-                          <CardFooter className="flex justify-between">
-                            <Button 
-                              variant="outline" 
-                              className="w-1/2 mr-2"
-                            >
-                              Details
-                            </Button>
-                            <Button 
-                              className="w-1/2 bg-estate-800 hover:bg-estate-700"
-                              onClick={() => handleAddToCart(item.id)}
-                            >
-                              Add to Cart
-                            </Button>
-                          </CardFooter>
-                        </Card>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-12">
-                      <p className="text-estate-500">No furniture items match your search.</p>
-                    </div>
-                  )}
-                </TabsContent>
-              ))}
-            </Tabs>
+      // Create previews
+      const newPreviews = newImages.map(file => URL.createObjectURL(file));
+      setImagePreviews(newPreviews);
+      
+      if (newImages.length >= 5) {
+        toast({
+          title: "Maximum images reached",
+          description: "You can upload a maximum of 5 images",
+        });
+      }
+    }
+  };
+  
+  const handleClickUpload = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+  
+  const removeImage = (index: number) => {
+    const newImages = [...images];
+    const newPreviews = [...imagePreviews];
+    
+    // Revoke the object URL to avoid memory leaks
+    URL.revokeObjectURL(newPreviews[index]);
+    
+    newImages.splice(index, 1);
+    newPreviews.splice(index, 1);
+    
+    setImages(newImages);
+    setImagePreviews(newPreviews);
+  };
+  
+  const nextStep = () => {
+    setFormStep(formStep + 1);
+  };
+  
+  const prevStep = () => {
+    setFormStep(formStep - 1);
+  };
+  
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    
+    // Simulate API call
+    setTimeout(() => {
+      setLoading(false);
+      toast({
+        title: "Furniture listed successfully",
+        description: "Your furniture has been added to the marketplace",
+      });
+      
+      // Reset form
+      setFurnitureType('');
+      setCondition('');
+      setImages([]);
+      setImagePreviews([]);
+      setFormStep(1);
+    }, 1500);
+  };
+  
+  useEffect(() => {
+    // Cleanup previews when component unmounts
+    return () => {
+      imagePreviews.forEach(preview => URL.revokeObjectURL(preview));
+    };
+  }, []);
+  
+  return (
+    <form onSubmit={handleSubmit} className="max-w-2xl mx-auto py-8 px-4 space-y-6">
+      <h2 className="text-2xl font-display text-estate-800 mb-4">List Furniture for Sale</h2>
+      
+      {formStep === 1 && (
+        <div className="space-y-6 animate-in fade-in">
+          <div className="space-y-2">
+            <Label htmlFor="furnitureType">Furniture Type</Label>
+            <Select value={furnitureType} onValueChange={setFurnitureType} required>
+              <SelectTrigger id="furnitureType">
+                <SelectValue placeholder="Select furniture type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="sofa">Sofa/Couch</SelectItem>
+                <SelectItem value="chair">Chair</SelectItem>
+                <SelectItem value="table">Table</SelectItem>
+                <SelectItem value="bed">Bed/Mattress</SelectItem>
+                <SelectItem value="storage">Storage/Shelving</SelectItem>
+                <SelectItem value="desk">Desk</SelectItem>
+                <SelectItem value="lighting">Lighting</SelectItem>
+                <SelectItem value="other">Other</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           
-          <div className="w-full md:w-1/4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Our Services</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="p-3 border rounded-md hover:bg-gray-50 transition-colors">
-                  <h3 className="font-medium mb-1">Furniture Consultation</h3>
-                  <p className="text-sm text-gray-600">Get expert advice on selecting the right furniture for your home</p>
-                </div>
-                <div className="p-3 border rounded-md hover:bg-gray-50 transition-colors">
-                  <h3 className="font-medium mb-1">Furniture Delivery</h3>
-                  <p className="text-sm text-gray-600">Professional delivery service direct to your home</p>
-                </div>
-                <div className="p-3 border rounded-md hover:bg-gray-50 transition-colors">
-                  <h3 className="font-medium mb-1">Furniture Assembly</h3>
-                  <p className="text-sm text-gray-600">Expert assembly service for all your furniture needs</p>
-                </div>
-                <div className="p-3 border rounded-md hover:bg-gray-50 transition-colors">
-                  <h3 className="font-medium mb-1">Repair & Maintenance</h3>
-                  <p className="text-sm text-gray-600">Keep your furniture looking new with our repair services</p>
-                </div>
-              </CardContent>
-              <CardFooter>
-                <Button 
-                  className="w-full bg-estate-800 hover:bg-estate-700"
-                  onClick={() => document.querySelector('[data-sheet-trigger="true"]')?.click()}
-                >
-                  Schedule Service
-                </Button>
-              </CardFooter>
-            </Card>
+          <div className="space-y-2">
+            <Label htmlFor="title">Title</Label>
+            <Input id="title" placeholder="e.g. Modern Leather Sofa" required />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="description">Description</Label>
+            <Textarea 
+              id="description" 
+              placeholder="Describe your furniture - include dimensions, material, age, etc." 
+              rows={4}
+              required
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="condition">Condition</Label>
+            <Select value={condition} onValueChange={setCondition} required>
+              <SelectTrigger id="condition">
+                <SelectValue placeholder="Select condition" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="new">New</SelectItem>
+                <SelectItem value="like-new">Like New</SelectItem>
+                <SelectItem value="good">Good</SelectItem>
+                <SelectItem value="fair">Fair</SelectItem>
+                <SelectItem value="poor">Poor</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="price">Price ($)</Label>
+            <Input id="price" type="number" min="0" step="0.01" placeholder="0.00" required />
+          </div>
+          
+          <div className="flex justify-end">
+            <Button 
+              type="button" 
+              onClick={nextStep}
+              className="bg-estate-800 hover:bg-estate-700"
+            >
+              Next Step <ChevronRight className="ml-2 h-4 w-4" />
+            </Button>
           </div>
         </div>
+      )}
+      
+      {formStep === 2 && (
+        <div className="space-y-6 animate-in fade-in">
+          <div className="space-y-2">
+            <Label>Upload Images (max 5)</Label>
+            <div 
+              className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:bg-gray-50 transition-colors"
+              onClick={handleClickUpload}
+            >
+              <UploadCloud className="h-10 w-10 text-gray-400 mx-auto mb-2" />
+              <p className="text-sm text-gray-500 mb-1">Drag and drop or click to upload</p>
+              <p className="text-xs text-gray-400">JPG, PNG or GIF (max 5MB each)</p>
+              <input 
+                type="file" 
+                ref={fileInputRef}
+                onChange={handleFileChange} 
+                className="hidden" 
+                multiple 
+                accept="image/*"
+              />
+            </div>
+            
+            {imagePreviews.length > 0 && (
+              <div className="mt-4">
+                <Label className="mb-2 block">Uploaded Images</Label>
+                <div className="grid grid-cols-3 gap-4">
+                  {imagePreviews.map((preview, index) => (
+                    <div key={index} className="relative rounded-md overflow-hidden h-24">
+                      <img 
+                        src={preview} 
+                        alt={`Preview ${index + 1}`} 
+                        className="w-full h-full object-cover"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeImage(index)}
+                        className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="location">Location</Label>
+            <Input id="location" placeholder="e.g. Los Angeles, CA" required />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="contact">Contact Information</Label>
+            <Input id="contact" placeholder="Phone number or email" required />
+          </div>
+          
+          <div className="flex justify-between">
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={prevStep}
+            >
+              Back
+            </Button>
+            <Button 
+              type="submit" 
+              className="bg-estate-800 hover:bg-estate-700"
+              disabled={loading}
+            >
+              {loading ? 'Submitting...' : 'List Furniture'}
+            </Button>
+          </div>
+        </div>
+      )}
+    </form>
+  );
+};
+
+const FurnitureGrid = () => {
+  const furnitureItems = [
+    {
+      id: 1,
+      title: "Modern Leather Sofa",
+      price: "$899",
+      location: "Los Angeles, CA",
+      condition: "Like New",
+      images: [
+        "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e",
+        "https://images.unsplash.com/photo-1558211583-d26f610c1eb1",
+      ]
+    },
+    {
+      id: 2,
+      title: "Wooden Dining Table",
+      price: "$350",
+      location: "San Francisco, CA",
+      condition: "Good",
+      images: [
+        "https://images.unsplash.com/photo-1577140917170-285929fb55b7",
+        "https://images.unsplash.com/photo-1592078615290-033ee584e267",
+      ]
+    },
+    {
+      id: 3,
+      title: "Office Desk Chair",
+      price: "$120",
+      location: "Seattle, WA",
+      condition: "Fair",
+      images: [
+        "https://images.unsplash.com/photo-1505843513577-22bb7d21e455",
+        "https://images.unsplash.com/photo-1580480055273-228ff5388ef8",
+      ]
+    },
+    {
+      id: 4,
+      title: "Queen Size Bed Frame",
+      price: "$450",
+      location: "Portland, OR",
+      condition: "Like New",
+      images: [
+        "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85",
+        "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af",
+      ]
+    },
+  ];
+  
+  return (
+    <div className="max-w-6xl mx-auto py-8 px-4">
+      <h2 className="text-2xl font-display text-estate-800 mb-6">Furniture Marketplace</h2>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {furnitureItems.map((item) => (
+          <Card key={item.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+            <Carousel className="w-full">
+              <CarouselContent>
+                {item.images.map((image, index) => (
+                  <CarouselItem key={index}>
+                    <div className="aspect-[4/3] relative">
+                      <img 
+                        src={image} 
+                        alt={`${item.title} - view ${index + 1}`}
+                        className="object-cover w-full h-full"
+                      />
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="left-2" />
+              <CarouselNext className="right-2" />
+            </Carousel>
+            <CardContent className="p-4">
+              <h3 className="font-medium text-lg mb-1">{item.title}</h3>
+              <p className="text-estate-800 font-semibold text-lg mb-2">{item.price}</p>
+              <div className="flex justify-between text-sm text-estate-500">
+                <span>{item.location}</span>
+                <span>Condition: {item.condition}</span>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
+    </div>
+  );
+};
+
+const Furniture = () => {
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Navbar />
+      
+      <main className="flex-grow bg-estate-50 pt-24">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <h1 className="text-3xl md:text-4xl font-display text-estate-800 mb-6 text-center">
+            Furniture Exchange
+          </h1>
+          <p className="text-estate-600 max-w-3xl mx-auto text-center mb-12">
+            Buy, sell or trade furniture with other property owners and renters. 
+            Find quality pieces for your home or list your own furniture for sale.
+          </p>
+          
+          <div className="bg-white rounded-xl shadow-sm p-6 mb-12">
+            <FurnitureForm />
+          </div>
+          
+          <FurnitureGrid />
+        </div>
+      </main>
       
       <Footer />
     </div>
