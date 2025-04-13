@@ -1,7 +1,13 @@
-
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, MapPin, School, ShoppingBag, Utensils, Park } from "lucide-react";
+import { 
+  ArrowLeft, 
+  MapPin, 
+  School, 
+  ShoppingBag, 
+  Utensils, 
+  Trees 
+} from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PaymentModal from "@/components/PaymentModal";
@@ -26,7 +32,6 @@ const PropertyDetails = () => {
   
   useEffect(() => {
     const fetchProperty = async () => {
-      // Try to fetch from Supabase first
       if (id) {
         const supabaseProperty = await getPropertyById(id);
         if (supabaseProperty) {
@@ -35,7 +40,6 @@ const PropertyDetails = () => {
         }
       }
 
-      // Fallback to demo data
       const foundProperty = properties.find(p => p.id === id);
       if (foundProperty) {
         setProperty(foundProperty);
@@ -65,18 +69,16 @@ const PropertyDetails = () => {
     );
   }
 
-  // Handle both Supabase and demo property formats
   const price = property.price?.toString ? property.price.toString() : property.price;
   const numericPrice = parseInt(price?.replace(/[^0-9]/g, "") || "0");
   const monthlyRent = Math.round(numericPrice * 0.004);
   const propertyId = property.id || id || "1";
   
-  // Mock nearby amenities data (in real app, this would come from an API)
   const nearbyAmenities = [
     { type: "School", name: "Lincoln Elementary School", distance: "0.5 miles", icon: School },
     { type: "Shopping", name: "Market Square Mall", distance: "1.2 miles", icon: ShoppingBag },
     { type: "Dining", name: "Riverfront Restaurants", distance: "0.8 miles", icon: Utensils },
-    { type: "Park", name: "Greenview Park", distance: "0.3 miles", icon: Park },
+    { type: "Park", name: "Greenview Park", distance: "0.3 miles", icon: Trees },
   ];
 
   return (
