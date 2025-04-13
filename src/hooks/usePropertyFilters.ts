@@ -8,8 +8,8 @@ export const usePropertyFilters = (initialSearch: string, initialType: PropertyT
   const [searchQuery, setSearchQuery] = useState(initialSearch);
   const [propertyType, setPropertyType] = useState<PropertyType>(initialType);
   const [priceRange, setPriceRange] = useState<[number, number]>([1000000, 8000000]);
-  const [bedrooms, setBedrooms] = useState<string>("");
-  const [bathrooms, setBathrooms] = useState<string>("");
+  const [bedrooms, setBedrooms] = useState<string>("any");
+  const [bathrooms, setBathrooms] = useState<string>("any");
   const [minArea, setMinArea] = useState<number | null>(null);
   const [maxArea, setMaxArea] = useState<number | null>(null);
   const [sortBy, setSortBy] = useState<string>("newest");
@@ -37,7 +37,7 @@ export const usePropertyFilters = (initialSearch: string, initialType: PropertyT
           query = query.gte('price', priceRange[0]).lte('price', priceRange[1]);
         }
         
-        if (bedrooms) {
+        if (bedrooms && bedrooms !== "any") {
           if (bedrooms === "5+") {
             query = query.gte('bedrooms', 5);
           } else {
@@ -45,7 +45,7 @@ export const usePropertyFilters = (initialSearch: string, initialType: PropertyT
           }
         }
 
-        if (bathrooms) {
+        if (bathrooms && bathrooms !== "any") {
           if (bathrooms === "4+") {
             query = query.gte('bathrooms', 4);
           } else {
@@ -106,7 +106,7 @@ export const usePropertyFilters = (initialSearch: string, initialType: PropertyT
         return numericPrice >= priceRange[0] && numericPrice <= priceRange[1];
       });
       
-      if (bedrooms) {
+      if (bedrooms && bedrooms !== "any") {
         filtered = filtered.filter(property => 
           bedrooms === "5+" 
             ? property.bedrooms >= 5
@@ -114,7 +114,7 @@ export const usePropertyFilters = (initialSearch: string, initialType: PropertyT
         );
       }
       
-      if (bathrooms) {
+      if (bathrooms && bathrooms !== "any") {
         filtered = filtered.filter(property => 
           bathrooms === "4+" 
             ? property.bathrooms >= 4
@@ -171,8 +171,8 @@ export const usePropertyFilters = (initialSearch: string, initialType: PropertyT
   const resetFilters = () => {
     setSearchQuery("");
     setPriceRange([1000000, 8000000]);
-    setBedrooms("");
-    setBathrooms("");
+    setBedrooms("any");
+    setBathrooms("any");
     setMinArea(null);
     setMaxArea(null);
     setPropertyType("all");
