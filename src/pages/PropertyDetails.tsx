@@ -6,7 +6,7 @@ import {
   School, 
   ShoppingBag, 
   Utensils, 
-  Trees 
+  TreeDeciduous 
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -78,7 +78,7 @@ const PropertyDetails = () => {
     { type: "School", name: "Lincoln Elementary School", distance: "0.5 miles", icon: School },
     { type: "Shopping", name: "Market Square Mall", distance: "1.2 miles", icon: ShoppingBag },
     { type: "Dining", name: "Riverfront Restaurants", distance: "0.8 miles", icon: Utensils },
-    { type: "Park", name: "Greenview Park", distance: "0.3 miles", icon: Trees },
+    { type: "Park", name: "Greenview Park", distance: "0.3 miles", icon: TreeDeciduous },
   ];
 
   return (
