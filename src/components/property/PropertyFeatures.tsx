@@ -14,24 +14,29 @@ const PropertyFeatures = ({ bedrooms, bathrooms, sqft }: PropertyFeaturesProps) 
     : sqft || "N/A";
 
   return (
-    <div className="grid grid-cols-3 gap-4 py-6 border-y border-gray-200">
+    <div className="grid grid-cols-3 gap-4 p-5 bg-white border border-gray-200 rounded-lg shadow-sm">
       <div className="text-center">
         <div className="flex justify-center mb-2">
           <Bed className="w-5 h-5 text-estate-500" />
         </div>
-        <p className="text-sm text-estate-500">{bedrooms || "N/A"} Beds</p>
+        <p className="text-lg font-medium text-estate-800">{bedrooms || "N/A"}</p>
+        <p className="text-xs text-estate-500">Bedrooms</p>
       </div>
-      <div className="text-center">
+      <div className="text-center border-x border-gray-100 px-2">
         <div className="flex justify-center mb-2">
           <Bath className="w-5 h-5 text-estate-500" />
         </div>
-        <p className="text-sm text-estate-500">{bathrooms || "N/A"} Baths</p>
+        <p className="text-lg font-medium text-estate-800">{bathrooms || "N/A"}</p>
+        <p className="text-xs text-estate-500">Bathrooms</p>
       </div>
       <div className="text-center">
         <div className="flex justify-center mb-2">
           <Square className="w-5 h-5 text-estate-500" />
         </div>
-        <p className="text-sm text-estate-500">{formattedSqft}</p>
+        <p className="text-lg font-medium text-estate-800">
+          {typeof sqft === 'number' ? sqft.toLocaleString() : sqft || "N/A"}
+        </p>
+        <p className="text-xs text-estate-500">Square Feet</p>
       </div>
     </div>
   );
