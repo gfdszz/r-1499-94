@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -53,9 +54,10 @@ export default {
           foreground: "hsl(var(--card-foreground))",
         },
         estate: {
-          100: "#F7F7F7",
-          200: "#E5E5E5",
-          300: "#D4D4D4",
+          50: "#F8F7F6",
+          100: "#F2F0EE",
+          200: "#E5E1DD",
+          300: "#D4CFC9",
           400: "#A3A3A3",
           500: "#737373",
           600: "#525252",
@@ -86,11 +88,31 @@ export default {
           "0%": { opacity: "0", transform: "translateY(10px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
+        zoomOut: {
+          "0%": { transform: "scale(1.02)" },
+          "100%": { transform: "scale(1)" },
+        },
+        slideInRight: {
+          "0%": { opacity: "0", transform: "translateX(30px)" },
+          "100%": { opacity: "1", transform: "translateX(0)" },
+        },
+        slideInLeft: {
+          "0%": { opacity: "0", transform: "translateX(-30px)" },
+          "100%": { opacity: "1", transform: "translateX(0)" },
+        },
+        scaleIn: {
+          "0%": { opacity: "0", transform: "scale(0.9)" },
+          "100%": { opacity: "1", transform: "scale(1)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         fadeIn: "fadeIn 0.5s ease-out forwards",
+        zoomOut: "zoomOut 8s ease-out forwards",
+        slideInRight: "slideInRight 0.5s ease-out forwards",
+        slideInLeft: "slideInLeft 0.5s ease-out forwards",
+        scaleIn: "scaleIn 0.5s ease-out forwards",
       },
     },
   },

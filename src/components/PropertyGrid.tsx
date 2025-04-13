@@ -37,6 +37,7 @@ const PropertyGrid = ({
 }: PropertyGridProps) => {
   const [properties, setProperties] = useState<Property[]>([]);
   const [isLoading, setIsLoading] = useState(loading);
+  const [hasRendered, setHasRendered] = useState(false);
   
   useEffect(() => {
     setIsLoading(true);
@@ -102,6 +103,7 @@ const PropertyGrid = ({
         ]);
       }
       setIsLoading(false);
+      setTimeout(() => setHasRendered(true), 100);
     };
 
     // Simulate network delay but make it shorter (250ms)
@@ -118,9 +120,9 @@ const PropertyGrid = ({
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 max-w-6xl mx-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8 max-w-6xl mx-auto">
         {Array.from({ length: 4 }, (_, i) => (
-          <div key={i} className="animate-in fade-in duration-300" style={{ animationDelay: `${i * 100}ms` }}>
+          <div key={i} className="animate-pulse" style={{ animationDelay: `${i * 100}ms` }}>
             <Skeleton className="h-[400px] w-full rounded-lg" />
           </div>
         ))}
@@ -129,12 +131,15 @@ const PropertyGrid = ({
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 max-w-7xl mx-auto px-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8 max-w-7xl mx-auto px-4">
       {filteredProperties.map((property, index) => (
         <div 
-          key={property.id} 
-          className="animate-in fade-in duration-300" 
-          style={{ animationDelay: `${index * 100}ms` }}
+          key={property.id}
+          className="opacity-0 animate-fadeIn"
+          style={{ 
+            animationDelay: `${hasRendered ? 0 : index * 150}ms`,
+            animationFillMode: 'forwards' 
+          }}
         >
           <PropertyCard {...property} type={property.type} />
         </div>
