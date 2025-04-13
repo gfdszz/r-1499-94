@@ -3,7 +3,8 @@ import { MapPin, Bed, Bath, Square, Home, Tag } from "lucide-react";
 import { Card, CardContent } from "./ui/card";
 import { Link } from "react-router-dom";
 import FavoriteButton from "./FavoriteButton";
-import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
+import { useState } from "react";
 
 interface PropertyCardProps {
   image: string;
@@ -28,29 +29,49 @@ const PropertyCard = ({
   area,
   type = 'sale'
 }: PropertyCardProps) => {
+  const [isHovered, setIsHovered] = useState(false);
   const displayPrice = type === 'rent' ? `${price}/month` : price;
 
   return (
     <Link to={`/property/${id}`}>
-      <Card className="overflow-hidden group cursor-pointer hover:shadow-xl transition-all duration-300 border border-estate-200 hover:border-estate-300 bg-white h-full transform hover:-translate-y-1">
+      <Card 
+        className="overflow-hidden group cursor-pointer hover:shadow-xl transition-all duration-500 border border-estate-200 hover:border-amber-300/50 bg-white h-full transform hover:-translate-y-2"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
         <CardContent className="p-0 h-full flex flex-col">
           <div className="relative aspect-[4/3] overflow-hidden">
             <img
               src={image}
               alt={title}
-              className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
+              className={cn(
+                "object-cover w-full h-full transition-transform duration-700",
+                isHovered ? "scale-110" : "scale-100"
+              )}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div 
+              className={cn(
+                "absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent transition-opacity duration-500",
+                isHovered ? "opacity-100" : "opacity-0"
+              )} 
+            />
             <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-estate-800 px-3 py-1.5 text-sm font-medium rounded-md shadow-md">
               {displayPrice}
             </div>
-            <div className={`absolute top-3 left-3 ${type === 'sale' ? 'bg-blue-500/90' : 'bg-green-500/90'} backdrop-blur-sm text-white px-3 py-1.5 text-sm font-medium rounded-md flex items-center gap-1 shadow-md`}>
+            <div className={cn(
+              "absolute top-3 left-3 backdrop-blur-sm text-white px-3 py-1.5 text-sm font-medium rounded-md flex items-center gap-1 shadow-md transition-transform duration-300",
+              type === 'sale' ? 'bg-blue-500/90' : 'bg-green-500/90',
+              isHovered ? "translate-y-0" : "translate-y-0"
+            )}>
               {type === 'sale' ? <Tag className="w-4 h-4" /> : <Home className="w-4 h-4" />}
               {type === 'sale' ? 'For Sale' : 'For Rent'}
             </div>
             
             {/* Add favorite button */}
-            <div className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform group-hover:scale-105">
+            <div className={cn(
+              "absolute bottom-3 right-3 transition-all duration-500",
+              isHovered ? "opacity-100 transform translate-y-0" : "opacity-0 transform translate-y-4"
+            )}>
               <FavoriteButton 
                 propertyId={id} 
                 variant="outline" 
@@ -60,12 +81,18 @@ const PropertyCard = ({
               />
             </div>
           </div>
-          <div className="p-5 flex-grow flex flex-col">
-            <h3 className="text-lg font-medium text-estate-800 line-clamp-1 group-hover:text-estate-600 transition-colors">
+          <div className="p-5 flex-grow flex flex-col bg-white">
+            <h3 className={cn(
+              "text-lg font-medium line-clamp-1 transition-colors duration-300",
+              isHovered ? "text-amber-700" : "text-estate-800"
+            )}>
               {title}
             </h3>
             <div className="flex items-center mt-2 text-estate-500">
-              <MapPin className="w-4 h-4 mr-1 flex-shrink-0" />
+              <MapPin className={cn(
+                "w-4 h-4 mr-1 flex-shrink-0 transition-colors duration-300",
+                isHovered ? "text-amber-500" : "text-estate-500"
+              )} />
               <span className="text-sm line-clamp-1">{location}</span>
             </div>
             

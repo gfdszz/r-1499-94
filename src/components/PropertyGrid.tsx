@@ -38,6 +38,7 @@ const PropertyGrid = ({
   const [properties, setProperties] = useState<Property[]>([]);
   const [isLoading, setIsLoading] = useState(loading);
   const [hasRendered, setHasRendered] = useState(false);
+  const [isInView, setIsInView] = useState(false);
   
   useEffect(() => {
     setIsLoading(true);
@@ -111,7 +112,25 @@ const PropertyGrid = ({
       requestAnimationFrame(loadProperties);
     }, 250);
     
-    return () => clearTimeout(timer);
+    // Set up intersection observer for animation
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setIsInView(true);
+        }
+      },
+      { threshold: 0.1 }
+    );
+    
+    const element = document.getElementById("properties");
+    if (element) {
+      observer.observe(element);
+    }
+    
+    return () => {
+      clearTimeout(timer);
+      observer.disconnect();
+    };
   }, [propProperties, fromSupabase]);
 
   const filteredProperties = filterType === 'all' 
@@ -137,8 +156,9 @@ const PropertyGrid = ({
           key={property.id}
           className="opacity-0 animate-fadeIn"
           style={{ 
-            animationDelay: `${hasRendered ? 0 : index * 150}ms`,
-            animationFillMode: 'forwards' 
+            animationDelay: `${(hasRendered || !isInView) ? 0 : index * 150 + 300}ms`,
+            animationFillMode: 'forwards',
+            animationPlayState: isInView ? 'running' : 'paused'
           }}
         >
           <PropertyCard {...property} type={property.type} />
