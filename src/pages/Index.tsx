@@ -6,6 +6,7 @@ import OurVision from "@/components/OurVision";
 import Testimonials from "@/components/Testimonials";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
+import HomeServices from "@/components/HomeServices";
 import { Link } from "react-router-dom";
 import { Armchair, ArrowRight, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -17,6 +18,7 @@ const Index = () => {
   const [scrolled, setScrolled] = useState(false);
   const [pageLoaded, setPageLoaded] = useState(false);
   const propertiesRef = useRef<HTMLElement>(null);
+  const servicesRef = useRef<HTMLElement>(null);
   
   // Observer for section visibility
   useEffect(() => {
@@ -51,6 +53,11 @@ const Index = () => {
   // Smooth scroll to properties section
   const scrollToProperties = () => {
     propertiesRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  // Smooth scroll to services section
+  const scrollToServices = () => {
+    servicesRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
@@ -97,6 +104,11 @@ const Index = () => {
           </div>
           <PropertyGrid />
         </div>
+      </section>
+
+      {/* Home Services Section */}
+      <section id="services" ref={servicesRef}>
+        <HomeServices />
       </section>
 
       <section 

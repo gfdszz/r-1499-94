@@ -1,5 +1,5 @@
 
-import { Menu, LogIn, LogOut, UserCircle } from "lucide-react";
+import { Menu, LogIn, LogOut, UserCircle, Wrench } from "lucide-react";
 import { Button } from "./ui/button";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -15,6 +15,11 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuGroup,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
+  DropdownMenuPortal,
 } from "@/components/ui/dropdown-menu";
 
 const Navbar = () => {
@@ -43,6 +48,61 @@ const Navbar = () => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6">
             <Link to="/properties" className="text-white hover:text-white/80 transition-colors font-medium">Properties</Link>
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="text-white hover:text-white/80 transition-colors font-medium flex items-center">
+                  Services
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <Link to="/furniture">
+                  <DropdownMenuItem>
+                    <span>Furniture</span>
+                  </DropdownMenuItem>
+                </Link>
+                <Link to="/#services">
+                  <DropdownMenuItem>
+                    <Wrench className="mr-2 h-4 w-4" />
+                    <span>Home Services</span>
+                  </DropdownMenuItem>
+                </Link>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup>
+                  <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>Maintenance</DropdownMenuSubTrigger>
+                    <DropdownMenuPortal>
+                      <DropdownMenuSubContent>
+                        <DropdownMenuItem>Regular Inspection</DropdownMenuItem>
+                        <DropdownMenuItem>Seasonal Maintenance</DropdownMenuItem>
+                        <DropdownMenuItem>Handyman Services</DropdownMenuItem>
+                      </DropdownMenuSubContent>
+                    </DropdownMenuPortal>
+                  </DropdownMenuSub>
+                  <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>Electrical</DropdownMenuSubTrigger>
+                    <DropdownMenuPortal>
+                      <DropdownMenuSubContent>
+                        <DropdownMenuItem>System Inspection</DropdownMenuItem>
+                        <DropdownMenuItem>Fixture Installation</DropdownMenuItem>
+                        <DropdownMenuItem>Wiring Upgrade</DropdownMenuItem>
+                      </DropdownMenuSubContent>
+                    </DropdownMenuPortal>
+                  </DropdownMenuSub>
+                  <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>Plumbing</DropdownMenuSubTrigger>
+                    <DropdownMenuPortal>
+                      <DropdownMenuSubContent>
+                        <DropdownMenuItem>Leak Detection</DropdownMenuItem>
+                        <DropdownMenuItem>Fixture Installation</DropdownMenuItem>
+                        <DropdownMenuItem>Emergency Services</DropdownMenuItem>
+                      </DropdownMenuSubContent>
+                    </DropdownMenuPortal>
+                  </DropdownMenuSub>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            
             <Link to="/about" className="text-white hover:text-white/80 transition-colors font-medium">About</Link>
             <Link to="/#testimonials" className="text-white hover:text-white/80 transition-colors font-medium">Testimonials</Link>
             <Link to="/contact" className="text-white hover:text-white/80 transition-colors font-medium">Contact</Link>
@@ -103,6 +163,11 @@ const Navbar = () => {
               <SheetContent>
                 <div className="flex flex-col space-y-6 mt-12">
                   <Link to="/properties" className="text-lg font-medium">Properties</Link>
+                  <Link to="/furniture" className="text-lg font-medium">Furniture</Link>
+                  <Link to="/#services" className="text-lg font-medium flex items-center">
+                    <Wrench className="mr-2 h-4 w-4" />
+                    Home Services
+                  </Link>
                   <Link to="/about" className="text-lg font-medium">About</Link>
                   <Link to="/#testimonials" className="text-lg font-medium">Testimonials</Link>
                   <Link to="/contact" className="text-lg font-medium">Contact</Link>

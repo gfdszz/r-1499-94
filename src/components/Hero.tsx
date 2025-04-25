@@ -51,7 +51,7 @@ const Hero = () => {
         )}>
           <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full mb-6 shadow-lg border border-white/10 hover:bg-white/15 transition-colors duration-300 transform hover:scale-105">
             <MapPin className="w-4 h-4 text-amber-200" />
-            <span className="text-white/90 text-sm font-medium">Luxury Real Estate Solutions</span>
+            <span className="text-white/90 text-sm font-medium">Your Complete Home Solution</span>
           </div>
           
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display text-white mb-6 leading-tight tracking-tight">
@@ -62,7 +62,7 @@ const Hero = () => {
           </h1>
           
           <p className="text-base sm:text-lg md:text-xl text-white/90 mb-8 md:mb-12 max-w-2xl mx-auto leading-relaxed">
-            Discover exceptional properties and sustainable living spaces curated for modern lifestyles.
+            Discover exceptional properties and services tailored for your modern lifestyle. From property hunting to home maintenance, we've got you covered.
           </p>
           
           <div className={cn(
@@ -82,7 +82,7 @@ const Hero = () => {
               {[
                 { label: "Properties", value: "1,500+" },
                 { label: "Happy Clients", value: "800+" },
-                { label: "Cities", value: "50+" }
+                { label: "Services", value: "10+" }
               ].map((stat, index) => (
                 <div 
                   key={index} 

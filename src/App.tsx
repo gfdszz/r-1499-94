@@ -1,3 +1,4 @@
+
 import { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -17,6 +18,7 @@ const Register = lazy(() => import("./pages/Register"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const AddProperty = lazy(() => import("./pages/AddProperty"));
 const Furniture = lazy(() => import("./pages/Furniture"));
+const Services = lazy(() => import("./pages/Services"));
 
 // Error boundary fallback
 const ErrorFallback = () => (
@@ -69,6 +71,7 @@ const App = () => (
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/add-property" element={<AddProperty />} />
               <Route path="/furniture" element={<Furniture />} />
+              <Route path="/services" element={<Services />} />
               <Route path="*" element={<ErrorFallback />} />
             </Routes>
           </Suspense>
