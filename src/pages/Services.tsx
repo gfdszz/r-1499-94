@@ -7,8 +7,13 @@ import QuoteRequestForm from '@/components/QuoteRequestForm';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar, Check, Clock, MapPin, Phone, Wrench } from 'lucide-react';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { toast } from '@/hooks/use-toast';
 
-const ServiceRequest = () => {
+const ServiceRequestLocal = () => {
   const [formData, setFormData] = useState({
     serviceType: '',
     name: '',
@@ -312,7 +317,7 @@ const Services = () => {
             </TabsContent>
             
             <TabsContent value="request" className="focus-visible:outline-none focus-visible:ring-0">
-              <ServiceRequest />
+              <ServiceRequestLocal />
             </TabsContent>
 
             <TabsContent value="quote" className="focus-visible:outline-none focus-visible:ring-0">
