@@ -3,7 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "react-router-dom";
-import { ArrowRight, Wrench, Plug, ShowerHead, Paintbrush, Thermometer, Leaf } from "lucide-react";
+import { ArrowRight, Wrench, Plug, ShowerHead, Paintbrush, Thermometer, Leaf, Brush } from "lucide-react";
 
 const servicesData = [
   {
@@ -133,26 +133,76 @@ const servicesData = [
   },
   {
     category: "landscaping",
-    title: "Landscaping & Gardening",
+    title: "Landscaping & Garden",
     icon: Leaf,
     services: [
       {
-        title: "Garden Design & Installation",
-        description: "Professional garden design and installation services to transform your outdoor space.",
-        price: "From $1,200",
-        duration: "2-5 days"
+        title: "Garden Design",
+        description: "Professional garden design and installation services.",
+        price: "From $500",
+        duration: "Varies"
       },
       {
-        title: "Lawn Care & Maintenance",
-        description: "Regular lawn maintenance including mowing, fertilization, and weed control.",
-        price: "From $120/month",
-        duration: "Bi-weekly visits"
+        title: "Lawn Maintenance",
+        description: "Regular lawn care including mowing and fertilization.",
+        price: "$150/month",
+        duration: "Bi-weekly"
       },
       {
-        title: "Tree & Shrub Pruning",
-        description: "Expert pruning and trimming of trees and shrubs to maintain health and appearance.",
+        title: "Tree Services",
+        description: "Tree trimming, removal, and maintenance services.",
         price: "From $200",
-        duration: "3-6 hours"
+        duration: "Varies"
+      }
+    ]
+  },
+  {
+    category: "interior",
+    title: "Interior Design",
+    icon: Brush,
+    services: [
+      {
+        title: "Design Consultation",
+        description: "Professional interior design consultation and planning.",
+        price: "$200",
+        duration: "2 hours"
+      },
+      {
+        title: "Room Makeover",
+        description: "Complete room redesign and styling services.",
+        price: "From $1000",
+        duration: "1-2 weeks"
+      },
+      {
+        title: "Color Consultation",
+        description: "Expert color scheme selection for your space.",
+        price: "$150",
+        duration: "1 hour"
+      }
+    ]
+  },
+  {
+    category: "smart-home",
+    title: "Smart Home",
+    icon: "house-plug",
+    services: [
+      {
+        title: "Smart Security",
+        description: "Installation of smart cameras and security systems.",
+        price: "From $500",
+        duration: "1 day"
+      },
+      {
+        title: "Home Automation",
+        description: "Setup of smart lighting, thermostats, and automation.",
+        price: "From $300",
+        duration: "4-6 hours"
+      },
+      {
+        title: "Entertainment Systems",
+        description: "Smart TV and home theater installation.",
+        price: "From $400",
+        duration: "3-5 hours"
       }
     ]
   }

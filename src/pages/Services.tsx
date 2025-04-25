@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/hooks/use-toast';
+import BookingCalendar from '@/components/BookingCalendar';
 
 const ServiceRequestLocal = () => {
   const [formData, setFormData] = useState({
@@ -306,6 +307,7 @@ const Services = () => {
           <Tabs defaultValue="services" className="w-full mb-12">
             <TabsList className="w-full max-w-md mx-auto mb-8">
               <TabsTrigger value="services" className="flex-1">Our Services</TabsTrigger>
+              <TabsTrigger value="booking" className="flex-1">Book Service</TabsTrigger>
               <TabsTrigger value="request" className="flex-1">Request Service</TabsTrigger>
               <TabsTrigger value="quote" className="flex-1">Get Quote</TabsTrigger>
             </TabsList>
@@ -314,6 +316,12 @@ const Services = () => {
               <HomeServices />
               <ServiceProfessionals />
               <ServiceProcess />
+            </TabsContent>
+
+            <TabsContent value="booking" className="focus-visible:outline-none focus-visible:ring-0">
+              <div className="max-w-md mx-auto">
+                <BookingCalendar />
+              </div>
             </TabsContent>
             
             <TabsContent value="request" className="focus-visible:outline-none focus-visible:ring-0">
