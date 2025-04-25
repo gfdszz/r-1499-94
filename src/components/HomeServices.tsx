@@ -2,8 +2,8 @@ import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Link } from "react-router-dom";
 import { ArrowRight, Wrench, Plug, ShowerHead, Paintbrush, Thermometer, Leaf, Brush } from "lucide-react";
+import { ServiceBadge } from "@/components/ui/service-badge";
 
 const servicesData = [
   {
@@ -245,8 +245,11 @@ export const HomeServices = () => {
                     className="overflow-hidden border-estate-100 transition-all duration-300 hover:shadow-md hover:border-estate-200"
                   >
                     <CardHeader className="pb-4">
-                      <CardTitle className="text-xl text-estate-800">{service.title}</CardTitle>
-                      <CardDescription className="text-estate-600">{service.description}</CardDescription>
+                      <div className="flex justify-between items-start">
+                        <CardTitle className="text-xl text-estate-800">{service.title}</CardTitle>
+                        <ServiceBadge type={category.category as any} />
+                      </div>
+                      <CardDescription className="text-estate-600 mt-2">{service.description}</CardDescription>
                     </CardHeader>
                     <CardContent className="pb-4">
                       <div className="flex justify-between items-center">
