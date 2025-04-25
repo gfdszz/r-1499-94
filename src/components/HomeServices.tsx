@@ -1,10 +1,9 @@
-
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "react-router-dom";
-import { ArrowRight, Wrench, Plug, ShowerHead, Paintbrush, Fan, Thermometer } from "lucide-react";
+import { ArrowRight, Wrench, Plug, ShowerHead, Paintbrush, Thermometer, Leaf } from "lucide-react";
 
 const servicesData = [
   {
@@ -129,6 +128,31 @@ const servicesData = [
         description: "Expert installation of new heating, ventilation, and air conditioning systems.",
         price: "From $3,500",
         duration: "1-2 days"
+      }
+    ]
+  },
+  {
+    category: "landscaping",
+    title: "Landscaping & Gardening",
+    icon: Leaf,
+    services: [
+      {
+        title: "Garden Design & Installation",
+        description: "Professional garden design and installation services to transform your outdoor space.",
+        price: "From $1,200",
+        duration: "2-5 days"
+      },
+      {
+        title: "Lawn Care & Maintenance",
+        description: "Regular lawn maintenance including mowing, fertilization, and weed control.",
+        price: "From $120/month",
+        duration: "Bi-weekly visits"
+      },
+      {
+        title: "Tree & Shrub Pruning",
+        description: "Expert pruning and trimming of trees and shrubs to maintain health and appearance.",
+        price: "From $200",
+        duration: "3-6 hours"
       }
     ]
   }

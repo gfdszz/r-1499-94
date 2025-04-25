@@ -1,14 +1,10 @@
-
 import React, { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import HomeServices from '@/components/HomeServices';
+import ServiceRequest from '@/components/ServiceRequest';
+import QuoteRequestForm from '@/components/QuoteRequestForm';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import { toast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar, Check, Clock, MapPin, Phone, Wrench } from 'lucide-react';
 
@@ -306,6 +302,7 @@ const Services = () => {
             <TabsList className="w-full max-w-md mx-auto mb-8">
               <TabsTrigger value="services" className="flex-1">Our Services</TabsTrigger>
               <TabsTrigger value="request" className="flex-1">Request Service</TabsTrigger>
+              <TabsTrigger value="quote" className="flex-1">Get Quote</TabsTrigger>
             </TabsList>
             
             <TabsContent value="services" className="focus-visible:outline-none focus-visible:ring-0">
@@ -316,6 +313,10 @@ const Services = () => {
             
             <TabsContent value="request" className="focus-visible:outline-none focus-visible:ring-0">
               <ServiceRequest />
+            </TabsContent>
+
+            <TabsContent value="quote" className="focus-visible:outline-none focus-visible:ring-0">
+              <QuoteRequestForm />
             </TabsContent>
           </Tabs>
         </div>

@@ -1,5 +1,4 @@
-
-import { Menu, LogIn, LogOut, UserCircle, Wrench } from "lucide-react";
+import { Menu, LogIn, LogOut, UserCircle, Wrench, FileText, Leaf } from "lucide-react";
 import { Button } from "./ui/button";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -56,15 +55,15 @@ const Navbar = () => {
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
+                <Link to="/services">
+                  <DropdownMenuItem>
+                    <Wrench className="mr-2 h-4 w-4" />
+                    <span>All Services</span>
+                  </DropdownMenuItem>
+                </Link>
                 <Link to="/furniture">
                   <DropdownMenuItem>
                     <span>Furniture</span>
-                  </DropdownMenuItem>
-                </Link>
-                <Link to="/#services">
-                  <DropdownMenuItem>
-                    <Wrench className="mr-2 h-4 w-4" />
-                    <span>Home Services</span>
                   </DropdownMenuItem>
                 </Link>
                 <DropdownMenuSeparator />
@@ -99,12 +98,22 @@ const Navbar = () => {
                       </DropdownMenuSubContent>
                     </DropdownMenuPortal>
                   </DropdownMenuSub>
+                  <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>Landscaping</DropdownMenuSubTrigger>
+                    <DropdownMenuPortal>
+                      <DropdownMenuSubContent>
+                        <DropdownMenuItem>Garden Design</DropdownMenuItem>
+                        <DropdownMenuItem>Lawn Care</DropdownMenuItem>
+                        <DropdownMenuItem>Tree & Shrub Pruning</DropdownMenuItem>
+                      </DropdownMenuSubContent>
+                    </DropdownMenuPortal>
+                  </DropdownMenuSub>
                 </DropdownMenuGroup>
               </DropdownMenuContent>
             </DropdownMenu>
             
+            <Link to="/blog" className="text-white hover:text-white/80 transition-colors font-medium">Blog</Link>
             <Link to="/about" className="text-white hover:text-white/80 transition-colors font-medium">About</Link>
-            <Link to="/#testimonials" className="text-white hover:text-white/80 transition-colors font-medium">Testimonials</Link>
             <Link to="/contact" className="text-white hover:text-white/80 transition-colors font-medium">Contact</Link>
             
             {user ? (
@@ -163,13 +172,16 @@ const Navbar = () => {
               <SheetContent>
                 <div className="flex flex-col space-y-6 mt-12">
                   <Link to="/properties" className="text-lg font-medium">Properties</Link>
-                  <Link to="/furniture" className="text-lg font-medium">Furniture</Link>
-                  <Link to="/#services" className="text-lg font-medium flex items-center">
+                  <Link to="/services" className="text-lg font-medium flex items-center">
                     <Wrench className="mr-2 h-4 w-4" />
-                    Home Services
+                    All Services
+                  </Link>
+                  <Link to="/furniture" className="text-lg font-medium">Furniture</Link>
+                  <Link to="/blog" className="text-lg font-medium flex items-center">
+                    <FileText className="mr-2 h-4 w-4" />
+                    Blog
                   </Link>
                   <Link to="/about" className="text-lg font-medium">About</Link>
-                  <Link to="/#testimonials" className="text-lg font-medium">Testimonials</Link>
                   <Link to="/contact" className="text-lg font-medium">Contact</Link>
                   
                   {user ? (

@@ -8,7 +8,7 @@ import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import HomeServices from "@/components/HomeServices";
 import { Link } from "react-router-dom";
-import { Armchair, ArrowRight, ChevronDown } from "lucide-react";
+import { Armchair, ArrowRight, ChevronDown, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState, useRef } from "react";
 import { cn } from "@/lib/utils";
@@ -19,6 +19,7 @@ const Index = () => {
   const [pageLoaded, setPageLoaded] = useState(false);
   const propertiesRef = useRef<HTMLElement>(null);
   const servicesRef = useRef<HTMLElement>(null);
+  const blogRef = useRef<HTMLDivElement>(null);
   
   // Observer for section visibility
   useEffect(() => {
@@ -159,6 +160,81 @@ const Index = () => {
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Blog Section Preview */}
+      <section className="py-24 bg-white" ref={blogRef}>
+        <div className="container mx-auto px-4 max-w-6xl">
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <h2 className="text-4xl font-display text-estate-800 mb-4 relative">
+              <span>Latest Articles & Tips</span>
+              <div className="w-20 h-1 bg-gradient-to-r from-amber-300 to-amber-400 mx-auto mt-4 rounded-full"></div>
+            </h2>
+            <p className="text-estate-600 text-lg">
+              Explore expert advice and insights on real estate, home improvement, and property management.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            {[
+              {
+                title: "10 Tips for First-Time Home Buyers",
+                excerpt: "Buying your first home can be overwhelming. Here are essential tips to make the process smoother.",
+                image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=800&h=500",
+                date: "April 18, 2025",
+              },
+              {
+                title: "Essential Home Maintenance Tasks for Every Season",
+                excerpt: "Keep your home in top condition year-round with this seasonal maintenance checklist.",
+                image: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=800&h=500",
+                date: "April 10, 2025",
+              },
+              {
+                title: "Smart Home Technology Worth Investing In",
+                excerpt: "Guide to the best smart home technologies that offer convenience, security, and energy efficiency.",
+                image: "https://images.unsplash.com/photo-1558002038-2f6f809ad5fb?auto=format&fit=crop&w=800&h=500",
+                date: "April 1, 2025",
+              }
+            ].map((post, index) => (
+              <div 
+                key={index}
+                className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1"
+                style={{ 
+                  opacity: 0,
+                  animation: 'fadeIn 0.8s ease-out forwards',
+                  animationDelay: `${index * 200}ms`,
+                }}
+              >
+                <div className="h-48 overflow-hidden">
+                  <img 
+                    src={post.image} 
+                    alt={post.title} 
+                    className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
+                  />
+                </div>
+                <div className="p-6">
+                  <p className="text-estate-500 text-sm mb-2">{post.date}</p>
+                  <h3 className="text-xl font-semibold text-estate-800 mb-2 line-clamp-2">{post.title}</h3>
+                  <p className="text-estate-600 mb-4 line-clamp-3">{post.excerpt}</p>
+                  <Link to="/blog" className="inline-flex items-center text-estate-800 font-medium group">
+                    Read Article
+                    <ArrowRight className="ml-1 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="text-center">
+            <Link to="/blog">
+              <Button className="bg-estate-800 hover:bg-estate-700 inline-flex items-center group">
+                <FileText className="mr-2 h-4 w-4" />
+                View All Articles
+                <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
